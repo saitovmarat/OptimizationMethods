@@ -1,5 +1,3 @@
-#include <iostream>
-#include <iomanip>
 #include "func.cpp"
 
 void showDirectMethodTable(int N) {
@@ -8,7 +6,7 @@ void showDirectMethodTable(int N) {
   std::cout << "-----------------------------------------\n";
   std::cout << std::setw(2) << "N" << " | " << std::setw(10) << "x_k" << std::endl;
   std::cout << "-----------------------------------------\n";
-  for (int i = 3; i < 20; i++) {
+  for (int i = 3; i < N; i++) {
     std::cout << std::setw(2) << i << " | " << std::setw(10) << directMethod(a, b, i) << std::endl;
   }
 }
@@ -24,7 +22,7 @@ void showDerivativesUsingMethodTable() {
 } 
 
 int main(int argc, char **argv) {
-  void showDirectMethodTable(int N);
-  void showDerivativesUsingMethodTable();
+  showDirectMethodTable(10);
+  showDerivativesUsingMethodTable();
   return 0;
 }
