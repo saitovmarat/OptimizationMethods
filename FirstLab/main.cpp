@@ -1,49 +1,31 @@
-#include "func.cpp"
+#include "./methods/directMethod.cpp"
+#include "./methods/powellMethod.cpp"
+#include "./methods/midpointMethod.cpp"
 
 #define A 0
 #define B 7
 #define EPS 0.1
 #define X0 0
 
+/// @brief Шаг вычисления производной функции
+#define H pow(10, -5)
+
 // TODO: 
 // 1) Написать метод Пауэла
-// 2) разобраться с шагом h 
-// 3) Вручную вывести несколько итераций
-// 4) Разобраться в смыслах методов  
-// 5) Улучшить архитектуру кода
+// 2) Вручную вывести несколько итераций
+// 3) Разобраться в смыслах методов 
 
-void showDirectMethodTable(int N) {
-  std::cout << "-----------------------------------------\n";
-  std::cout << "Прямой метод" << std::endl;
-  std::cout << "-----------------------------------------\n";
-  std::cout << std::setw(2) << "N" << " | " << std::setw(10) << "x_k"  << " | " << std::setw(10) << "f_xk" << std::endl;
-  std::cout << "-----------------------------------------\n";
-  double f_min = pow(10, 6);
-  double x_min = pow(10, 6);
-  for (int i = 3; i < N; i++) {
-    if (directMethod(A, B, i).second < f_min) {
-      f_min = directMethod(A, B, i).second;
-      x_min = directMethod(A, B, i).first;
-    }
-    std::cout << std::setw(2) << i << " | " << std::setw(10) << directMethod(A, B, i).first << " | " << std::setw(10) << directMethod(A, B, i).second << std::endl;
-  }
-  std::cout << "Точка минимума: " << x_min << std::endl;
-  std::cout << "Значение функции в этой точке = " << f_min << std::endl;
-
+double func(double x)
+{
+  return pow((x - 2), 2);
 }
 
-void showDerivativesUsingMethodTable() {
-  std::cout << "-----------------------------------------\n";
-  std::cout << "-----------------------------------------\n";
-  std::cout << "Метод, основанный на использовании производных" << std::endl;
-  std::cout << "-----------------------------------------\n";
-  std::cout << std::setw(3) << "k" << " | " << std::setw(8) << "z_k" << " | " << std::setw(6) << "f_zk" << std::endl;
-  std::cout << "-----------------------------------------\n";
-  derivativesUsingMethod(A, B, EPS);
-} 
+int main() {
+  int n = 10;
 
-int main(int argc, char **argv) {
-  showDirectMethodTable(10);
-  showDerivativesUsingMethodTable();
+  DirectMethod(A, B, func).outputResults(n);
+  PowellMethod(A, B, func).outputResults();
+  MidpointMethod(A, B, EPS, H, func).outputResults();
+
   return 0;
 }
