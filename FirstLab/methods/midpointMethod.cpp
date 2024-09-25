@@ -26,13 +26,13 @@ class MidpointMethod {
     /// @brief Вывод таблицы результатов выполнения метода поиска средней точки
     void outputResults() 
     {
-      std::cout << "-----------------------------------------\n";
+      std::cout << "------------------------------------------------\n";
       std::cout << "3) Метод поиска средней точки или поиск Больцано\n";
-      std::cout << "-----------------------------------------\n";
+      std::cout << "------------------------------------------------\n";
       std::cout << std::setw(3) << "k" << " | " << std::setw(8) << "z_k" << " | " << std::setw(6) << "f_zk\n";
-      std::cout << "-----------------------------------------\n";
+      std::cout << "------------------------------------------------\n";
       int k = 0;
-      double f_zk = pow(10, 6);
+      double f_zk = std::numeric_limits<double>::max();
       double a_k = a_0;
       double b_k = b_0;
       double z_k = 0.0;
@@ -51,7 +51,8 @@ class MidpointMethod {
         } 
         showMidpointMethodIntermediateResult(k, z_k, f_zk);
       }
-      std::cout << "Точка минимума: " << z_k << "\n";
+      std::cout << "Точка минимума функции: " << z_k << std::endl;
+      std::cout << "Значение функции в этой точке = " << f_zk << std::endl;;
     } 
 
   private:

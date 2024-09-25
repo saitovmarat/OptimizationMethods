@@ -5,15 +5,14 @@
 #define A 0
 #define B 7
 #define EPS 0.1
+#define SIGMA 0.1
 #define X0 0
+
+/// @brief Шаг вычисления метода Пауэлла
+#define DELTA_X 0.1
 
 /// @brief Шаг вычисления производной функции
 #define H pow(10, -5)
-
-// TODO: 
-// 1) Написать метод Пауэла
-// 2) Вручную вывести несколько итераций
-// 3) Разобраться в смыслах методов 
 
 double func(double x)
 {
@@ -24,7 +23,7 @@ int main() {
   int n = 10;
 
   DirectMethod(A, B, func).outputResults(n);
-  PowellMethod(A, B, func).outputResults();
+  PowellMethod(A, B, EPS, SIGMA, DELTA_X, func).outputResults();
   MidpointMethod(A, B, EPS, H, func).outputResults();
 
   return 0;

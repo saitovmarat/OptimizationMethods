@@ -3,8 +3,6 @@
 #include <iomanip>
 #include <math.h>
 
-// TODO: придумать нормальное описание параметра функции
-
 /// @brief Метод равномерного поиска (прямой) 
 /// для нахождения минимума функции одной переменной.
 class DirectMethod {
@@ -22,24 +20,25 @@ class DirectMethod {
     /// @param n максимальное количество разбиений интервала
     void outputResults(int n) 
     {
-      std::cout << "-----------------------------------------\n";
+      std::cout << "----------------------------\n";
       std::cout << "1) Метод равномерного поиска\n";
-      std::cout << "-----------------------------------------\n";
+      std::cout << "----------------------------\n";
       std::cout << std::setw(2) << "N" << " | " << std::setw(10) << "x_k"  << " | " << std::setw(10) << "f_xk\n";
-      std::cout << "-----------------------------------------\n";
-      double f_min = pow(10, 6);
-      double x_min = pow(10, 6);
+      std::cout << "----------------------------\n";
+      double f_min = std::numeric_limits<double>::max();
+      double x_min = std::numeric_limits<double>::max();
       for (int i = 3; i < n; i++) {
-        if (directMethodResult(i).second < f_min) {
-          f_min = directMethodResult(i).second;
-          x_min = directMethodResult(i).first;
+        double x, f;
+        std::tie(x, f) = directMethodResult(i);
+        if (f < f_min) {
+          f_min = f;
+          x_min = x;
         }
-        std::cout << std::setw(2) << i << " | " << std::setw(10) << directMethodResult(i).first << " | " << std::setw(10) << directMethodResult(i).second << "\n";
+        std::cout << std::setw(2) << i << " | " << std::setw(10) << x << " | " << std::setw(10) << f << "\n";
       }
       std::cout << "Точка минимума: " << x_min << "\n";
       std::cout << "Значение функции в этой точке = " << f_min << "\n\n";  
     }
-
   private:
     double a_0;
     double b_0;
