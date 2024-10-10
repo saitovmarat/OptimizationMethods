@@ -9,7 +9,7 @@
 #define X0 0
 
 /// @brief Шаг вычисления метода Пауэлла
-#define DELTA_X 0.1
+#define DELTA_X 0.876
 
 /// @brief Шаг вычисления производной функции
 #define H pow(10, -5)

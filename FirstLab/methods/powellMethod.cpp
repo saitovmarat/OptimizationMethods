@@ -78,7 +78,7 @@ class PowellMethod {
         x_new = ((x2 + x1) / 2) - (a1 / (2 * a2));
         
 
-        // Вывод промежутончых результатов
+        // Вывод промежуточных результатов
         std::vector<double> values = {static_cast<double>(k), x1, f_x1, x2, f_x2, x3, f_x3, x_new};
         for (size_t i = 0; i < values.size(); ++i) {
             std::cout << std::setw((i == 0) ? 4 : 12) << values[i] << " | ";
@@ -86,10 +86,7 @@ class PowellMethod {
         std::cout << "\n";
         k++;
 
-        if(x_new > x3) {
-          x1 = x_new;
-          continue;
-        }
+        x1 = x_new;
 
         if (std::abs(f_min - func(x_new)) <= eps
           && std::abs(x_min - x_new) <= sigma) 
