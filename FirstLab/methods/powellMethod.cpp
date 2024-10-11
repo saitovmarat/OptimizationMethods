@@ -76,7 +76,7 @@ class PowellMethod {
         double a1 = (f_x2 - f_x1) / (x2 - x1);
         double a2 = (1 / (x3 - x2)) * (((f_x3 - f_x1) / (x3 - x1)) - ((f_x2 - f_x1) / (x2 - x1)));
         x_new = ((x2 + x1) / 2) - (a1 / (2 * a2));
-        
+        double f_x_new = func(x_new);
 
         // Вывод промежуточных результатов
         std::vector<double> values = {static_cast<double>(k), x1, f_x1, x2, f_x2, x3, f_x3, x_new};
@@ -86,9 +86,9 @@ class PowellMethod {
         std::cout << "\n";
         k++;
 
-        x1 = x_new;
+        x1 = f_x_new < f_min ? x_new : x_min;
 
-        if (std::abs(f_min - func(x_new)) <= eps
+        if (std::abs(f_min - f_x_new) <= eps
           && std::abs(x_min - x_new) <= sigma) 
         {
           std::cout << "Точка минимума функции: " << x_new << std::endl;
