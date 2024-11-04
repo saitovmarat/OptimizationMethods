@@ -1,4 +1,4 @@
-#ifndef POINT_H // Include guard start
+#ifndef POINT_H
 #define POINT_H
 
 struct Point {
