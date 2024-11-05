@@ -80,7 +80,5 @@ private:
         currentDeltaX /= alpha;
       }
     }
-
-    return std::make_pair(basePoint, f_xk);
   }
 };
