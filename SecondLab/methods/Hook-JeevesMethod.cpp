@@ -43,7 +43,7 @@ private:
   double eps;
   std::function<double(Point)> func;
 
-  /// @return Норма точки
+  /// @return Евклидова норма точки
   double norm(Point point)
   {
     return sqrt(point.x1 * point.x1 + point.x2 * point.x2);
@@ -57,20 +57,26 @@ private:
 
     double f_xk = func(basePoint);
 
-    while (norm(currentDeltaX) >= eps)
+    while (true)
     {
       double higher_f_xk = func(basePoint + currentDeltaX);
       double lower_f_xk = func(basePoint - currentDeltaX);
       double next_f_xk = std::min(higher_f_xk, lower_f_xk);
       if (next_f_xk < f_xk)
       {
-        basePoint = higher_f_xk < lower_f_xk ? basePoint + currentDeltaX : basePoint - currentDeltaX;
+        basePoint = higher_f_xk < lower_f_xk ? 
+          basePoint + currentDeltaX : 
+          basePoint - currentDeltaX;
         f_xk = next_f_xk;
 
-        std::cout << std::setprecision(8) << std::setw(10) << f_xk << " | " << std::setw(10) << basePoint.x1 << " | " << std::setw(10) << basePoint.x2 << "\n";
+        std::cout << std::setprecision(8) << std::setw(10) << f_xk << " | " 
+          << std::setw(10) << basePoint.x1 << " | " << std::setw(10) << basePoint.x2 << "\n";
       }
       else
       {
+        if(norm(currentDeltaX) < eps) {
+          return std::make_pair(basePoint, f_xk);
+        }
         currentDeltaX /= alpha;
       }
     }
