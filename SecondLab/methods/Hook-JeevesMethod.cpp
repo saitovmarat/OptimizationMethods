@@ -3,22 +3,15 @@
 #include <iomanip>
 #include <math.h>
 #include "../point.cpp"
+#include "../variables.h"
 
 /// @brief Прямой метод нахождения экстремума функции двух переменных
 class HookJeevesMethod
 {
 public:
-  /// @param startPoint начальная точка
-  /// @param deltaX шаг вычисления
-  /// @param alpha
-  /// @param eps точность вычисления
   /// @param func функция вида f(x1, x2)
-  HookJeevesMethod(Point startPoint, Point deltaX, double alpha, double eps, std::function<double(Point)> func)
+  HookJeevesMethod(std::function<double(Point)> func)
   {
-    this->startPoint = startPoint;
-    this->deltaX = deltaX;
-    this->alpha = alpha;
-    this->eps = eps;
     this->func = func;
   }
 
@@ -37,23 +30,13 @@ public:
   }
 
 private:
-  Point startPoint;
-  Point deltaX;
-  double alpha;
-  double eps;
   std::function<double(Point)> func;
 
-  /// @return Евклидова норма точки
-  double norm(Point point)
-  {
-    return sqrt(point.x1 * point.x1 + point.x2 * point.x2);
-  }
-
   /// @return Точка минимума функции и значение функции в этой точке
-  std::pair<Point, double> result()
+  const std::pair<Point, double> result()
   {
-    Point basePoint = startPoint;
-    Point currentDeltaX = deltaX;
+    Point basePoint = variables::START_POINT;
+    Point currentDeltaX = variables::DELTA_X;
 
     double f_xk = func(basePoint);
 
@@ -74,10 +57,10 @@ private:
       }
       else
       {
-        if(norm(currentDeltaX) < eps) {
+        if(norm(currentDeltaX) < variables::EPS) {
           return std::make_pair(basePoint, f_xk);
         }
-        currentDeltaX /= alpha;
+        currentDeltaX /= variables::ALPHA;
       }
     }
   }

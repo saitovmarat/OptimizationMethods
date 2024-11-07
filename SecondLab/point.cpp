@@ -30,4 +30,11 @@ struct Point
   }
 };
 
+/// @return Евклидова норма точки
+double norm(Point point)
+{
+  return sqrt(point.x1 * point.x1 + point.x2 * point.x2);
+}
+
+
 #endif // POINT_H
