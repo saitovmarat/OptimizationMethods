@@ -4,6 +4,7 @@
 #include <math.h>
 #include "../point.cpp"
 #include "../variables.h"
+#include "../helpfulFunctions.cpp"
 
 /// @brief 
 class NewtonMethod
@@ -18,32 +19,47 @@ public:
   /// @brief 
   void outputResults()
   {
-    std::cout << "------------------------------------\n";
+    std::cout << "-------------------------------\n";
     std::cout << "2) Метод Ньютона\n";
-    std::cout << "------------------------------------\n";
+    std::cout << "-------------------------------\n";
+    std::cout << std::setw(4) << "k" << " | " << std::setw(10) << "x1" << " | " << std::setw(10) << "x2" << "\n";
+    std::cout << "-------------------------------\n";
+    const std::pair<Point, double> methodResult = result();
+    std::cout << "-------------------------------\n";
+    std::cout << "Точка минимума X: " << "[" << methodResult.first.x1 << "; " << methodResult.first.x2 << "]" << "\n";
+    std::cout << "Значение нормы градиента в этой точке |∇f(X)| = " << methodResult.second << "\n\n";
   }
 
 private:
   std::function<double(Point)> func;
 
-  /// @return 
-  double result()
+  /// @return Точка минимума функции и значение нормы градиента в этой точке
+  const std::pair<Point, double> result()
   {
-    double eps_1 = variables::EPS;
-    double eps_2 = variables::EPS;
     double M = 1000;
     Point basePoint = variables::START_POINT;
 
-    Point grad_f_x = { 
-      4 * (basePoint.x1 - 1), 
-      2 * (basePoint.x2 - 6)
-    };
+    for(int k = 1; k <= M; k++) {
+      const std::vector<double> grad_f_x = { 
+        helpfulFunctions::getFirstDerivative(func, basePoint, 1), 
+        helpfulFunctions::getFirstDerivative(func, basePoint, 2)
+      };
+      const vectorMatrix H_x = helpfulFunctions::getHesseMatrix(func, basePoint);
+      const vectorMatrix inversed_H_x = helpfulFunctions::getInversedMatrix(H_x);
+      
 
-    double H_x[2][2] = {
-      { 4 * basePoint.x1, 0 },
-      { 0, 2 * basePoint.x2 }
-    };
+      if(helpfulFunctions::getNorm(grad_f_x) < variables::EPS) {
+        return std::make_pair(basePoint, helpfulFunctions::getNorm(grad_f_x));
+      }
+      
+      basePoint = {
+        basePoint.x1 - inversed_H_x[0][0] * grad_f_x[0], 
+        basePoint.x2 - inversed_H_x[1][1] * grad_f_x[1]
+      };
 
-    return 0.0;
+      std::cout << std::setw(4) << k << " | " << std::setw(10) << basePoint.x1 << " | " << std::setw(10) << basePoint.x2 << "\n";
+    }  
+    throw std::runtime_error("Метод Ньютона не сходится");
   }
+
 };

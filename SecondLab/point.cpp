@@ -28,6 +28,16 @@ struct Point
     x2 /= a;
     return *this;
   }
+
+  bool operator==(Point point)
+  {
+    return x1 == point.x1 && x2 == point.x2;
+  }
+
+  bool operator!=(Point point)
+  {
+    return x1 != point.x1 || x2 != point.x2;
+  }
 };
 
 /// @return Евклидова норма точки
