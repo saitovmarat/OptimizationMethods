@@ -17,11 +17,15 @@ namespace helpfulFunctions {
     return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
   }
 
-  /// @brief Функция для получения нормы вектора длиной 2
-  /// @param f_x вектор длиной 2
+  /// @brief Функция для получения нормы вектора
+  /// @param f_x вектор
   /// @return норма вектора
   double getNorm(std::vector<double> f_x) {
-    return sqrt(pow(f_x[0], 2) + pow(f_x[1], 2));
+    double result = 0;
+    for(double f_xi : f_x) {
+      result += pow(f_xi, 2);
+    }
+    return sqrt(result);
   }
 
   /// @brief Функция для получения обратной матрицы размером 2 на 2
@@ -29,7 +33,7 @@ namespace helpfulFunctions {
   /// @return обратная матрица
   vectorMatrix getInversedMatrix(vectorMatrix matrix) 
   {
-    double determinant = getDeterminant(matrix);
+    const double determinant = getDeterminant(matrix);
     if (determinant == 0) {
       return {};
     } 

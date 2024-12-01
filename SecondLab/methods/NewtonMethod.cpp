@@ -36,7 +36,7 @@ private:
   /// @return Точка минимума функции и значение нормы градиента в этой точке
   const std::pair<Point, double> result()
   {
-    double M = 1000;
+    const double M = 1000;
     Point basePoint = variables::START_POINT;
 
     for(int k = 1; k <= M; k++) {
