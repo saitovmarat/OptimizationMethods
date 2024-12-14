@@ -49,12 +49,12 @@ namespace helpfulFunctions {
   /// @param deravativeVariableInd индекс выбранной переменной 
   /// @return первая производная
   double getFirstDerivative(std::function<double(Point)> func, Point point, int deravativeVariableInd) {
-    double x1 = point.x1;
-    double x2 = point.x2;
+    double x1 = point.coords[0];
+    double x2 = point.coords[1];
     double h = 0.1;
     int i = deravativeVariableInd == 1 ? 1 : 0;
     int j = deravativeVariableInd == 2 ? 1 : 0;
-    return (func({x1 + h*i, x2 + h*j}) - func({x1 - h*i, x2 - h*j})) / (2 * h); 
+    return (func(Point({x1 + h*i, x2 + h*j})) - func(Point({x1 - h*i, x2 - h*j}))) / (2 * h); 
   }
 
   /// @brief Получение второй производной функции двух переменных по выбранной переменной
@@ -62,12 +62,12 @@ namespace helpfulFunctions {
   /// @param deravativeVariableInd индекс выбранной переменной 
   /// @return вторая производная
   double getSecondDerivative(std::function<double(Point)> func, Point point, int deravativeVariableInd) {
-    double x1 = point.x1;
-    double x2 = point.x2;
+    double x1 = point.coords[0];
+    double x2 = point.coords[1];
     double h = 0.1;
     int i = deravativeVariableInd == 1 ? 1 : 0;
     int j = deravativeVariableInd == 2 ? 1 : 0;
-    return (func({x1 - h*i, x2 - h*j}) - 2 * func({x1, x2}) + func({x1 + h*i, x2 + h*j})) / pow(h, 2); 
+    return (func(Point({x1 - h*i, x2 - h*j})) - 2 * func(Point({x1, x2})) + func(Point({x1 + h*i, x2 + h*j}))) / pow(h, 2); 
   }
 
   /// @brief Получение матрицы Гессе для функции двух переменных
@@ -81,6 +81,29 @@ namespace helpfulFunctions {
       { 0, getSecondDerivative(func, point, 2) }
     };
   }
+
+  /// @brief Умножение матрицы на вектор
+  /// @param matrix матрица
+  /// @param vector вектор
+  /// @return вектор - результат умножения матрицы на вектор
+  Point mulptiplyMatrixByVector(const vectorMatrix matrix, const std::vector<double> vector)  
+  {
+    if (vector.size() != matrix.size()) {
+      throw std::invalid_argument("Размер вектора должен совпадать с количеством строк матрицы.");
+    }
+
+    std::vector<double> result(matrix[0].size(), 0.0);
+
+    for (size_t i = 0; i < matrix.size(); ++i) {
+      for (size_t j = 0; j < matrix[i].size(); ++j) {
+        result[j] += vector[i] * matrix[i][j];
+      }
+    }
+
+    return Point(result);
+  }
+
+
 }
 
 #endif

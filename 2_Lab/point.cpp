@@ -1,49 +1,85 @@
+#include <vector>
 #ifndef POINT_H
 #define POINT_H
 
 struct Point
 {
-  double x1;
-  double x2;
-  Point operator+(Point point)
+  std::vector<double> coords = {};
+  Point() {}
+  Point(std::vector<double> coords) : coords(coords) {}
+
+  Point operator+(const Point& point) const
   {
-    return Point{x1 + point.x1, x2 + point.x2};
+    std::vector<double> resultCoords;
+    for (size_t i = 0; i < coords.size(); ++i)
+    {
+      resultCoords.push_back(coords[i] + point.coords[i]);
+    }
+    return Point(resultCoords);
   }
 
-  Point operator-(Point point)
+  Point operator-(const Point& point) const
   {
-    return Point{x1 - point.x1, x2 - point.x2};
+    std::vector<double> resultCoords;
+    for (size_t i = 0; i < coords.size(); ++i)
+    {
+      resultCoords.push_back(coords[i] - point.coords[i]);
+    }
+    return Point(resultCoords);
   }
 
-  Point operator+=(Point point)
+  Point& operator+=(const Point& point)
   {
-    x1 += point.x1;
-    x2 += point.x2;
+    for (size_t i = 0; i < coords.size(); ++i)
+    {
+      coords[i] += point.coords[i];
+    }
     return *this;
   }
 
-  Point operator/=(double a)
+  Point& operator-=(const Point& point)
   {
-    x1 /= a;
-    x2 /= a;
+    for (size_t i = 0; i < coords.size(); ++i)
+    {
+      coords[i] -= point.coords[i];
+    }
     return *this;
   }
 
-  bool operator==(Point point)
+  Point& operator/=(double a)
   {
-    return x1 == point.x1 && x2 == point.x2;
+    for (size_t i = 0; i < coords.size(); ++i)
+    {
+      coords[i] /= a;
+    }
+    return *this;
   }
 
-  bool operator!=(Point point)
+  bool operator==(const Point& point) const
   {
-    return x1 != point.x1 || x2 != point.x2;
+    for (size_t i = 0; i < coords.size(); ++i)
+    {
+      if (coords[i] != point.coords[i])
+        return false;
+    }
+    return true;
+  }
+
+  bool operator!=(const Point& point) const
+  {
+    return !(*this == point);
   }
 };
 
 /// @return Евклидова норма точки
-double norm(Point point)
+double getNorm(const Point& point)
 {
-  return sqrt(point.x1 * point.x1 + point.x2 * point.x2);
+  double sum{0.0};
+  for (const auto& coord : point.coords)
+  {
+    sum += coord * coord;
+  }
+  return std::sqrt(sum);
 }
 
 

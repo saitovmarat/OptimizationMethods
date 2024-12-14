@@ -24,8 +24,10 @@ public:
     std::cout << std::setw(10) << "f(x1, x2)" << " | " << std::setw(10) << "x1" << " | " << std::setw(10) << "x2\n";
     std::cout << "------------------------------------\n";
     const std::pair<Point, double> methodResult = result();
+    double x1 = methodResult.first.coords[0];
+    double x2 = methodResult.first.coords[1];
     std::cout << "------------------------------------\n";
-    std::cout << "Точка минимума (x1, x2): " << "[" << methodResult.first.x1 << "; " << methodResult.first.x2 << "]" << "\n";
+    std::cout << "Точка минимума (x1, x2): " << "[" << x1 << "; " << x2 << "]" << "\n";
     std::cout << "Значение функции в этой точке f(x1, x2) = " << methodResult.second << "\n\n";
   }
 
@@ -36,7 +38,7 @@ private:
   const std::pair<Point, double> result()
   {
     Point basePoint = variables::START_POINT;
-    double currentDeltaX = variables::DELTA_X.x1;
+    double currentDeltaX = variables::DELTA_X;
 
     double f_basePoint = func(basePoint);
 
@@ -45,10 +47,10 @@ private:
       double minFunc = std::numeric_limits<double>::max();
       for (double dx = -1; dx < 2; dx++) {
         for (double dy = -1; dy < 2; dy++) {
-          Point newPoint = {
-            dx * currentDeltaX + basePoint.x1, 
-            dy * currentDeltaX + basePoint.x2
-          };
+          Point newPoint({
+            dx * currentDeltaX + basePoint.coords[0], 
+            dy * currentDeltaX + basePoint.coords[1]
+          });
           if (newPoint == basePoint)
             continue;
           
@@ -63,10 +65,10 @@ private:
         basePoint = minPoint;
         f_basePoint = minFunc;
         std::cout << std::setprecision(8) << std::setw(10) << f_basePoint << " | "
-          << std::setw(10) << basePoint.x1 << " | " << std::setw(10) << basePoint.x2 << "\n";
+          << std::setw(10) << basePoint.coords[0] << " | " << std::setw(10) << basePoint.coords[1] << "\n";
       }
       else {
-        if(norm(basePoint - minPoint) < variables::EPS) {
+        if(getNorm(basePoint - minPoint) < variables::EPS) {
           return std::make_pair(basePoint, f_basePoint);
         }
         currentDeltaX /= variables::ALPHA;
