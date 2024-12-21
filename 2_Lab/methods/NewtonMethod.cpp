@@ -6,7 +6,7 @@
 #include "../variables.h"
 #include "../helpfulFunctions.cpp"
 
-/// @brief 
+/// @brief Метод Ньютона для нахождения минимума функции двух переменных 
 class NewtonMethod
 {
 public:
@@ -16,7 +16,6 @@ public:
     this->func = func;
   }
 
-  /// @brief 
   void outputResults()
   {
     std::cout << "-------------------------------\n";
@@ -27,7 +26,7 @@ public:
     const std::pair<Point, double> methodResult = result();
     std::cout << "-------------------------------\n";
     std::cout << "Точка минимума X: " << "[" << methodResult.first.coords[0] << "; " << methodResult.first.coords[1] << "]" << "\n";
-    std::cout << "" << methodResult.second << "\n\n";
+    std::cout << "Значение нормы градиента в этой точке |∇f(X)| = " << methodResult.second << "\n\n";
   }
 
 private:
