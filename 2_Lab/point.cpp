@@ -1,4 +1,5 @@
 #include <vector>
+#include <math.h>
 #ifndef POINT_H
 #define POINT_H
 
@@ -6,7 +7,7 @@ struct Point
 {
   std::vector<double> coords = {};
   Point() {}
-  Point(std::vector<double> coords) : coords(coords) {}
+  Point(const std::vector<double>& coords) : coords(coords) {}
 
   Point operator+(const Point& point) const
   {
@@ -79,7 +80,7 @@ double getNorm(const Point& point)
   {
     sum += coord * coord;
   }
-  return std::sqrt(sum);
+  return sqrt(sum);
 }
 
 

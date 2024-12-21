@@ -27,7 +27,7 @@ public:
     const std::pair<Point, double> methodResult = result();
     std::cout << "-------------------------------\n";
     std::cout << "Точка минимума X: " << "[" << methodResult.first.coords[0] << "; " << methodResult.first.coords[1] << "]" << "\n";
-    std::cout << "Значение нормы градиента в этой точке |∇f(X)| = " << methodResult.second << "\n\n";
+    std::cout << "" << methodResult.second << "\n\n";
   }
 
 private:
