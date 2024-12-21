@@ -6,6 +6,7 @@
 struct Point
 {
   std::vector<double> coords = {};
+
   Point() {}
   Point(std::vector<double> coords) : coords(coords) {}
 
@@ -15,6 +16,15 @@ struct Point
     for (size_t i = 0; i < coords.size(); ++i)
     {
       resultCoords.push_back(coords[i] + point.coords[i]);
+    }
+    return Point(resultCoords);
+  }
+
+  Point operator+(const double& num) {
+    std::vector<double> resultCoords;
+    for (size_t i = 0; i < coords.size(); ++i)
+    {
+      resultCoords.push_back(coords[i] + num);
     }
     return Point(resultCoords);
   }

@@ -5,7 +5,7 @@
 class BarrierFunctionsMethod
 {
 public:
-  BarrierFunctionsMethod(const std::function<double(double, double)>& func) 
+  BarrierFunctionsMethod(const std::function<double(Point)>& func) 
   {
     this->func = func;
   };
@@ -14,10 +14,12 @@ public:
   {
     std::cout << "------------------------------------\n";
     std::cout << "2) Метод барьерных функций\n";
+    std::cout << "Пока не реализовано\n";
   }
 
 private:
-  std::function<double(double, double)> func;
+  std::function<double(Point)> func;
+
   double result() const {
 
     return 0.0;
