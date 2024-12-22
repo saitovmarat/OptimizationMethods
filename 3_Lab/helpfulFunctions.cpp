@@ -81,6 +81,30 @@ namespace helpfulFunctions {
     return sqrt(result);
   }
 
+  /// @brief Функция для получения штрафа за нарушение ограничений
+  /// @param area вектор ограничений
+  /// @return штраф
+  const double squareCut(const std::vector<double>& area) {
+    double areaSum = 0.0;
+    for(double area_i : area) {
+      areaSum += area_i;
+    }
+    /// @note Штраф - это квадрат суммы ограничений, поделенный на 2
+    return 1/2 * (pow(areaSum, 2));
+  }
+
+  /// @brief Функция для вычисления штрафа за нарушение ограничений,
+  ///        используемого в методе барьерных функций.
+  /// @param area вектор ограничений
+  /// @return штраф
+  const double reversePenaltyFunc(const std::vector<double>& area) {
+    double areaSum = 0.0;
+    for(double area_i : area) {
+      areaSum += area_i;
+    }
+    return 1 / areaSum;
+  }
+
   /// @brief Умножение матрицы на вектор
   /// @param matrix матрица
   /// @param vector вектор
