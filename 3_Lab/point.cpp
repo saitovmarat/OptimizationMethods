@@ -39,6 +39,15 @@ struct Point
     return Point(resultCoords);
   }
 
+  Point operator-(const double& num) {
+    std::vector<double> resultCoords;
+    for (size_t i = 0; i < coords.size(); ++i)
+    {
+      resultCoords.push_back(coords[i] - num);
+    }
+    return Point(resultCoords);
+  }
+
   Point& operator+=(const Point& point)
   {
     for (size_t i = 0; i < coords.size(); ++i)
