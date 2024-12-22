@@ -10,18 +10,17 @@ double func(const Point& point) {
   return pow(x1, 2) + pow(x2, 2) - 6*x1 - 3*x2 + 5;
 }
 
-const double squareCut(const Point& point) {
+const std::vector<double> areaRestrictions(const Point& point) {
   const double x1 = point.coords[0];
   const double x2 = point.coords[1];
-  const double result = pow(1/2 * (x1 + x2 -3 + 2*x1 + x2 - 4), 2);
-  return result;
+  return { x1 + x2 - 3, 2*x1 + x2 - 4 };
 }
 
 int main() {
   auto start = std::chrono::high_resolution_clock::now();
   
-  PenaltyFunctionsMethod(func, squareCut).outputResults();
-  BarrierFunctionsMethod(func).outputResults();
+  PenaltyFunctionsMethod(func, areaRestrictions).outputResults();
+  BarrierFunctionsMethod(func, areaRestrictions).outputResults();
 
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> duration = end - start;
