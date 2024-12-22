@@ -10,10 +10,10 @@ public:
   /// @param isValid функция для определения того, находится ли точка в произвольном множестве
   PenaltyFunctionsMethod(
     const std::function<double(Point)>& func, 
-    const std::function<double(Point)>& squareCut) 
+    const std::function<std::vector<double>(Point)>& areaRestrictions) 
   {
     this->func = func;
-    this->squareCut = squareCut;
+    this->areaRestrictions = areaRestrictions;
   }
 
   void outputResults() {
@@ -30,14 +30,13 @@ public:
 
 private:
   std::function<double(Point)> func;
-  std::function<double(Point)> squareCut;
+  std::function<std::vector<double>(Point)> areaRestrictions;
 
 private:
   const std::pair<Point, double> result() const {
     const double M = 1000;
     Point basePoint = variables::START_POINT;
-    double ri = variables::R;
-    double squareCutResult = ri * squareCut(basePoint);
+    double ri = variables::R_01;
 
     for(int k = 1; k <= M; k++) {
       const std::vector<double> grad_f_x = { 
@@ -51,13 +50,15 @@ private:
         return std::make_pair(basePoint, helpfulFunctions::getNorm(grad_f_x));
       }
 
+      const std::vector<double> area = areaRestrictions(basePoint);
+      double squareCutResult = ri * helpfulFunctions::squareCut(area);
+
       const double penalty = ri * squareCutResult; 
       basePoint -= helpfulFunctions::mulptiplyMatrixByVector(inversed_H_x, grad_f_x) + penalty;
       
       std::cout << std::setw(4) << k << " | " << std::setw(10) << basePoint.coords[0] << " | " << std::setw(10) << basePoint.coords[1] << "\n";
 
-      squareCutResult = squareCut(basePoint);
-      ri = ri / variables::C;
+      ri *= variables::C1;
     }  
     throw std::runtime_error("Метод Штрафов не сходится");
   }
