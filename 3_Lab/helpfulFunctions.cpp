@@ -87,10 +87,9 @@ namespace helpfulFunctions {
   const double squareCut(const std::vector<double>& area) {
     double areaSum = 0.0;
     for(double area_i : area) {
-      areaSum += area_i;
+      areaSum += pow(area_i, 2) + (area_i > 0) ? pow(area_i, 2) : 0;
     }
-    /// @note Штраф - это квадрат суммы ограничений, поделенный на 2
-    return 1/2 * (pow(areaSum, 2));
+    return areaSum;
   }
 
   /// @brief Функция для вычисления штрафа за нарушение ограничений,
@@ -102,7 +101,7 @@ namespace helpfulFunctions {
     for(double area_i : area) {
       areaSum += area_i;
     }
-    return 1 / areaSum;
+    return 1.0 / areaSum;
   }
 
   /// @brief Умножение матрицы на вектор

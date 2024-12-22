@@ -24,7 +24,7 @@ public:
     const std::pair<Point, double> methodResult = result();
     std::cout << "-----+------------+------------\n";
     std::cout << "Точка минимума X: " << "[" << methodResult.first.coords[0] << "; " << methodResult.first.coords[1] << "]" << "\n";
-    std::cout << "Значение модуля функции ошибки в этой точке = " << methodResult.second << "\n\n";
+    std::cout << "Значение модуля функции ошибки в этой точке |P(X, rk)| = " << methodResult.second << "\n\n";
   };    
 
 private:

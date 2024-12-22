@@ -51,7 +51,7 @@ private:
       }
 
       const std::vector<double> area = areaRestrictions(basePoint);
-      double squareCutResult = ri * helpfulFunctions::squareCut(area);
+      double squareCutResult = 0.5 * ri * helpfulFunctions::squareCut(area);
 
       const double penalty = ri * squareCutResult; 
       basePoint -= helpfulFunctions::mulptiplyMatrixByVector(inversed_H_x, grad_f_x) + penalty;
