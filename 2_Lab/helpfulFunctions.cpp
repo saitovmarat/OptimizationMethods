@@ -70,15 +70,26 @@ namespace helpfulFunctions {
     return (func(Point({x1 - h*i, x2 - h*j})) - 2 * func(Point({x1, x2})) + func(Point({x1 + h*i, x2 + h*j}))) / pow(h, 2); 
   }
 
+  /// @brief Получение смешанной второй производной функции двух переменных
+  /// @param point значение двух переменных
+  /// @return вторая производная
+  double getMixedSecondDerivative(std::function<double(Point)> func, Point point) {
+    double x1 = point.coords[0];
+    double x2 = point.coords[1];
+    double h = 0.1;
+    return (func(Point({x1 + h, x2 + h})) - func(Point({x1 + h, x2})) - 
+            func(Point({x1, x2 + h})) + func(Point({x1, x2}))) 
+            / (pow(h, 2)); 
+  }
+
   /// @brief Получение матрицы Гессе для функции двух переменных
   /// @param func функция двух переменных
   /// @param point значение двух переменных
-  /// @param deravativeVariableInd индекс выбранной переменной 
   /// @return матрица Гессе
   const vectorMatrix getHesseMatrix(std::function<double(Point)> func, Point point) {
     return {
-      { getSecondDerivative(func, point, 1), 0 },
-      { 0, getSecondDerivative(func, point, 2) }
+      { getSecondDerivative(func, point, 1), getMixedSecondDerivative(func, point) },
+      { getMixedSecondDerivative(func, point), getSecondDerivative(func, point, 2) }
     };
   }
 
