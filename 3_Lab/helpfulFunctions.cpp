@@ -11,6 +11,7 @@ typedef std::vector<std::vector<double>> vectorMatrix;
 
 namespace helpfulFunctions {
   /// @brief Получение первой производной функции двух переменных по выбранной переменной
+  /// @param func функция вида f(x1, x2)
   /// @param point значение двух переменных
   /// @param deravativeVariableInd индекс выбранной переменной 
   /// @return первая производная
@@ -23,7 +24,24 @@ namespace helpfulFunctions {
     return (func(Point({x1 + h*i, x2 + h*j})) - func(Point({x1 - h*i, x2 - h*j}))) / (2 * h); 
   }
 
+  /// @brief Получение первой производной функции со штрафом двух переменных по выбранной переменной
+  /// @param func функция вида f(x1, x2, ri)
+  /// @param point значение двух переменных
+  /// @param ri значение штрафа
+  /// @param deravativeVariableInd индекс выбранной переменной 
+  /// @return первая производная
+  double getFirstDerivative(std::function<double(Point, double)> func, Point point, double ri, int deravativeVariableInd) {
+    double x1 = point.coords[0];
+    double x2 = point.coords[1];
+    double h = 0.1;
+    int i = deravativeVariableInd == 1 ? 1 : 0;
+    int j = deravativeVariableInd == 2 ? 1 : 0;
+    const double result = (func(Point({x1 + h*i, x2 + h*j}), ri) - func(Point({x1 - h*i, x2 - h*j}), ri)) / (2 * h);
+    return result; 
+  }
+
   /// @brief Получение второй производной функции двух переменных по выбранной переменной
+  /// @param func функция вида f(x1, x2)
   /// @param point значение двух переменных
   /// @param deravativeVariableInd индекс выбранной переменной 
   /// @return вторая производная
@@ -36,7 +54,24 @@ namespace helpfulFunctions {
     return (func(Point({x1 - h*i, x2 - h*j})) - 2 * func(Point({x1, x2})) + func(Point({x1 + h*i, x2 + h*j}))) / pow(h, 2); 
   }
 
+  /// @brief Получение второй производной функции двух переменных по выбранной переменной
+  /// @param func функция вида f(x1, x2, ri)
+  /// @param point значение двух переменных
+  /// @param ri значение штрафа
+  /// @param deravativeVariableInd индекс выбранной переменной 
+  /// @return вторая производная
+  double getSecondDerivative(std::function<double(Point, double)> func, Point point, double ri, int deravativeVariableInd) {
+    double x1 = point.coords[0];
+    double x2 = point.coords[1];
+    double h = 0.1;
+    int i = deravativeVariableInd == 1 ? 1 : 0;
+    int j = deravativeVariableInd == 2 ? 1 : 0;
+    const double result = (func(Point({x1 - h*i, x2 - h*j}), ri) - 2 * func(Point({x1, x2}), ri) + func(Point({x1 + h*i, x2 + h*j}), ri)) / pow(h, 2);
+    return result; 
+  }
+
   /// @brief Получение смешанной второй производной функции двух переменных
+  /// @param func функция вида f(x1, x2)
   /// @param point значение двух переменных
   /// @return вторая производная
   double getMixedSecondDerivative(std::function<double(Point)> func, Point point) {
@@ -45,6 +80,19 @@ namespace helpfulFunctions {
     double h = 0.1;
     return (func(Point({x1 + h, x2 + h})) - func(Point({x1 + h, x2})) - 
             func(Point({x1, x2 + h})) + func(Point({x1, x2}))) 
+            / (pow(h, 2)); 
+  }
+
+  /// @brief Получение смешанной второй производной функции со штрафов от двух переменных
+  /// @param func функция вида f(x1, x2, ri)
+  /// @param point значение двух переменных
+  /// @return вторая производная
+  double getMixedSecondDerivative(std::function<double(Point, double)> func, Point point, double ri) {
+    double x1 = point.coords[0];
+    double x2 = point.coords[1];
+    double h = 0.1;
+    return (func(Point({x1 + h, x2 + h}), ri) - func(Point({x1 + h, x2}), ri) - 
+            func(Point({x1, x2 + h}), ri) + func(Point({x1, x2}), ri)) 
             / (pow(h, 2)); 
   }
 
@@ -57,6 +105,17 @@ namespace helpfulFunctions {
       { getSecondDerivative(func, point, 1), getMixedSecondDerivative(func, point) },
       { getMixedSecondDerivative(func, point), getSecondDerivative(func, point, 2) }
     };
+  }
+
+  /// @brief Получение матрицы Гессе для функции двух переменных
+  /// @param func функция двух переменных со штрафом
+  /// @param point значение двух переменных
+  /// @param ri значение штрафа
+  /// @return матрица Гессе
+  const vectorMatrix getHesseMatrix(std::function<double(Point, double)> func, Point point, double ri) {
+    const vectorMatrix result = { { getSecondDerivative(func, point, ri, 1), getMixedSecondDerivative(func, point, ri) },
+                                  { getMixedSecondDerivative(func, point, ri), getSecondDerivative(func, point, ri, 2) } };
+    return result;
   }
 
   /// @brief Функция для получения определителя матрицы размером 2 на 2
@@ -98,7 +157,8 @@ namespace helpfulFunctions {
   const double squareCut(const std::vector<double>& area) {
     double areaSum = 0.0;
     for(double area_i : area) {
-      areaSum += pow(area_i, 2) + (area_i > 0) ? pow(area_i, 2) : 0;
+      areaSum += pow(area_i, 2);
+      areaSum += (area_i > 0) ? pow(area_i, 2) : 0.0;
     }
     return areaSum;
   }
@@ -110,9 +170,9 @@ namespace helpfulFunctions {
   const double reversePenaltyFunc(const std::vector<double>& area) {
     double areaSum = 0.0;
     for(double area_i : area) {
-      areaSum += area_i;
+      areaSum += log(-area_i);
     }
-    return 1.0 / areaSum;
+    return areaSum;
   }
 
   /// @brief Умножение матрицы на вектор

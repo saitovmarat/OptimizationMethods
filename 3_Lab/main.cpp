@@ -4,7 +4,7 @@
 #include "./methods/PenaltyFunctionsMethod.cpp"
 #include <chrono>
 
-double func(const Point& point) {
+const double func(const Point& point) {
   const double x1 = point.coords[0];
   const double x2 = point.coords[1];
   return pow(x1, 2) + pow(x2, 2) - 6*x1 - 3*x2 + 5;
