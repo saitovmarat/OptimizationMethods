@@ -1,3 +1,5 @@
 .vscode
 */.vscode
 */main.exe
+*/.venv
+*/*.ipynb
