@@ -9,6 +9,8 @@
 
 typedef std::vector<std::vector<double>> vectorMatrix;
 
+//TODO: Добавить возможность выбирать очередность переменных по которым идет смешанное диф-ние
+
 namespace helpfulFunctions {
   /// @brief Получение первой производной функции двух переменных по выбранной переменной
   /// @param func функция вида f(x1, x2)
@@ -24,7 +26,7 @@ namespace helpfulFunctions {
     return (func(Point({x1 + h*i, x2 + h*j})) - func(Point({x1 - h*i, x2 - h*j}))) / (2 * h); 
   }
 
-  /// @brief Получение первой производной функции со штрафом двух переменных по выбранной переменной
+  /// @brief Получение первой производной штрафной функции двух переменных по выбранной переменной
   /// @param func функция вида f(x1, x2, ri)
   /// @param point значение двух переменных
   /// @param ri значение штрафа
@@ -54,7 +56,7 @@ namespace helpfulFunctions {
     return (func(Point({x1 - h*i, x2 - h*j})) - 2 * func(Point({x1, x2})) + func(Point({x1 + h*i, x2 + h*j}))) / pow(h, 2); 
   }
 
-  /// @brief Получение второй производной функции двух переменных по выбранной переменной
+  /// @brief Получение второй производной штрафной функции двух переменных по выбранной переменной
   /// @param func функция вида f(x1, x2, ri)
   /// @param point значение двух переменных
   /// @param ri значение штрафа
@@ -79,11 +81,11 @@ namespace helpfulFunctions {
     double x2 = point.coords[1];
     double h = 0.1;
     return (func(Point({x1 + h, x2 + h})) - func(Point({x1 + h, x2})) - 
-            func(Point({x1, x2 + h})) + func(Point({x1, x2}))) 
-            / (pow(h, 2)); 
+            func(Point({x1, x2 + h})) + func(Point({x1, x2}))) / 
+            (pow(h, 2)); 
   }
 
-  /// @brief Получение смешанной второй производной функции со штрафов от двух переменных
+  /// @brief Получение смешанной второй производной штрафной функции двух переменных
   /// @param func функция вида f(x1, x2, ri)
   /// @param point значение двух переменных
   /// @return вторая производная
@@ -92,8 +94,8 @@ namespace helpfulFunctions {
     double x2 = point.coords[1];
     double h = 0.1;
     return (func(Point({x1 + h, x2 + h}), ri) - func(Point({x1 + h, x2}), ri) - 
-            func(Point({x1, x2 + h}), ri) + func(Point({x1, x2}), ri)) 
-            / (pow(h, 2)); 
+            func(Point({x1, x2 + h}), ri) + func(Point({x1, x2}), ri)) /
+            (pow(h, 2)); 
   }
 
   /// @brief Получение матрицы Гессе для функции двух переменных
@@ -107,7 +109,7 @@ namespace helpfulFunctions {
     };
   }
 
-  /// @brief Получение матрицы Гессе для функции двух переменных
+  /// @brief Получение матрицы Гессе для штрафной функции двух переменных
   /// @param func функция двух переменных со штрафом
   /// @param point значение двух переменных
   /// @param ri значение штрафа
@@ -170,9 +172,9 @@ namespace helpfulFunctions {
   const double reversePenaltyFunc(const std::vector<double>& area) {
     double areaSum = 0.0;
     for(double area_i : area) {
-      areaSum += log(-area_i);
+      areaSum += area_i;
     }
-    return areaSum;
+    return 1.0 / areaSum;
   }
 
   /// @brief Умножение матрицы на вектор
