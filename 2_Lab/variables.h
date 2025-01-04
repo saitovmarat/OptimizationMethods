@@ -1,7 +1,7 @@
 #ifndef VARIABLES_H
 #define VARIABLES_H
 
-#include "point.cpp"
+#include "../point.cpp"
 
 typedef std::vector<std::vector<double>> vectorMatrix;
 

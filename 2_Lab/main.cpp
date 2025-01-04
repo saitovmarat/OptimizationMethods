@@ -1,8 +1,7 @@
 #include <math.h>
-#include "point.cpp"
-#include "methods/Hook-JeevesMethod.cpp"
-#include "methods/NewtonMethod.cpp"
-
+#include "../point.cpp"
+#include "./methods/Hook-JeevesMethod.cpp"
+#include "./methods/NewtonMethod.cpp"
 #include <chrono>
 
 double func(const Point& point) {
@@ -10,7 +9,6 @@ double func(const Point& point) {
   const double x2 = point.coords[1];
   return 2 * pow(x1 - 1, 2) + pow(x2 - 6, 2);
 }
-
 
 int main() {
   auto start = std::chrono::high_resolution_clock::now();

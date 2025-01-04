@@ -2,7 +2,6 @@
 #include <functional>
 #include <iomanip>
 #include <math.h>
-#include "../point.cpp"
 #include "../variables.h"
 
 /// @brief Прямой метод нахождения экстремума функции двух переменных

@@ -1,6 +1,6 @@
 #ifndef VARIABLES_H
 #define VARIABLES_H
-#include "point.cpp"
+#include "../point.cpp"
 
 namespace variables {
   const double C1 = 5.0;

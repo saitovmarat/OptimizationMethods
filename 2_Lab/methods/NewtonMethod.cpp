@@ -2,9 +2,8 @@
 #include <functional>
 #include <iomanip>
 #include <math.h>
-#include "../point.cpp"
 #include "../variables.h"
-#include "../helpfulFunctions.cpp"
+#include "../../helpfulFunctions.cpp"
 
 /// @brief Метод Ньютона для нахождения минимума функции двух переменных 
 class NewtonMethod
@@ -50,7 +49,7 @@ private:
         return std::make_pair(basePoint, helpfulFunctions::getNorm(grad_f_x));
       }
 
-      basePoint -= helpfulFunctions::mulptiplyMatrixByVector(inversed_H_x, grad_f_x);
+      basePoint -= helpfulFunctions::productMatrixByVector(inversed_H_x, grad_f_x);
 
       std::cout << std::setw(4) << k << " | " << std::setw(10) << basePoint.coords[0] << " | " << std::setw(10) << basePoint.coords[1] << "\n";
     }  

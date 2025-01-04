@@ -88,6 +88,7 @@ namespace helpfulFunctions {
   /// @brief Получение смешанной второй производной штрафной функции двух переменных
   /// @param func функция вида f(x1, x2, ri)
   /// @param point значение двух переменных
+  /// @param ri значение штрафа
   /// @return вторая производная
   double getMixedSecondDerivative(std::function<double(Point, double)> func, Point point, double ri) {
     double x1 = point.coords[0];
@@ -177,11 +178,30 @@ namespace helpfulFunctions {
     return 1.0 / areaSum;
   }
 
+  /// @brief Умножение матриц
+  /// @param matrix1 первая матрица
+  /// @param matrix2 вторая матрица
+  /// @return матрица - результат умножения матриц
+  const vectorMatrix productMatrixByMatrix(const vectorMatrix matrix1, const vectorMatrix matrix2) {
+    if (matrix1[0].size() != matrix2.size()) {
+      throw std::invalid_argument("Размеры матриц не совпадают.");
+    }
+    vectorMatrix result(matrix1.size(), std::vector<double>(matrix2[0].size(), 0.0));
+    for (size_t i = 0; i < matrix1.size(); ++i) {
+      for (size_t j = 0; j < matrix2[0].size(); ++j) {
+        for (size_t k = 0; k < matrix2.size(); ++k) {
+          result[i][j] += matrix1[i][k] * matrix2[k][j];
+        }
+      }
+    }
+    return result;
+  }
+
   /// @brief Умножение матрицы на вектор
   /// @param matrix матрица
   /// @param vector вектор
   /// @return вектор - результат умножения матрицы на вектор
-  Point mulptiplyMatrixByVector(const vectorMatrix matrix, const std::vector<double> vector)  
+  const std::vector<double> productMatrixByVector(const vectorMatrix matrix, const std::vector<double> vector)  
   {
     if (vector.size() != matrix.size()) {
       throw std::invalid_argument("Размер вектора должен совпадать с количеством строк матрицы.");
@@ -192,8 +212,53 @@ namespace helpfulFunctions {
         result[j] += vector[i] * matrix[i][j];
       }
     }
-    return Point(result);
+    return result;
   }
+
+  /// @brief Умножение матрицы на скаляр
+  /// @param scalar cкаляр
+  /// @param matrix матрица
+  /// @return матрица - результат умножения матрицы на скаляр
+  const vectorMatrix productMatrixByScalar(double scalar, const vectorMatrix& matrix) {
+    vectorMatrix result = matrix;
+    for (size_t i = 0; i < matrix.size(); ++i) {
+      for (size_t j = 0; j < matrix[i].size(); ++j) {
+        result[i][j] = scalar * matrix[i][j];
+      }
+    }
+    return result;
+  }
+
+  /// @brief Сумма матриц
+  /// @param matrix1 первая матрица
+  /// @param matrix2 вторая матрица
+  /// @return матрица - результат сложения матриц
+  const vectorMatrix sumMatrixPerMatrix(const vectorMatrix& matrix1, const vectorMatrix& matrix2) {
+    if (matrix1.size() != matrix2.size() || matrix1[0].size() != matrix2[0].size()) {
+      throw std::invalid_argument("Размеры матриц должны совпадать.");
+    }
+    vectorMatrix result = matrix1;
+    for (size_t i = 0; i < matrix1.size(); ++i) {
+      for (size_t j = 0; j < matrix1[i].size(); ++j) {
+        result[i][j] = matrix1[i][j] + matrix2[i][j];
+      }
+    }
+    return result;
+  }
+
+  /// @brief Умножение вектора на скаляр
+  /// @param scalar скаляр
+  /// @param vec вектор
+  /// @return вектор - результат умножения вектора на скаляр
+  const std::vector<double> productVectorByScalar(double scalar, const std::vector<double>& vec) {
+    std::vector<double> result(vec.size());
+    for (size_t i = 0; i < vec.size(); ++i) {
+        result[i] = scalar * vec[i];
+    }
+    return result;
+  }
+
+  
 }
 
 #endif

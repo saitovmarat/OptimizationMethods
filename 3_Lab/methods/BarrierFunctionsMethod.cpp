@@ -2,7 +2,7 @@
 #include <iostream>
 #include <iomanip>
 #include "../variables.h"
-#include "../helpfulFunctions.cpp"
+#include "../../helpfulFunctions.cpp"
 
 typedef std::vector<std::vector<double>> vectorMatrix;
 
@@ -66,7 +66,7 @@ private:
         return std::make_pair(basePoint, abs(penalty));
       }
 
-      basePoint -= helpfulFunctions::mulptiplyMatrixByVector(inversed_H_x, grad_f_x);
+      basePoint -= helpfulFunctions::productMatrixByVector(inversed_H_x, grad_f_x);
       
       std::cout << std::setw(4) << k << " | " << std::setw(10) << basePoint.coords[0] << " | " << std::setw(10) << basePoint.coords[1] << "\n";
 

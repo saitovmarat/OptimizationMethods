@@ -1,8 +1,8 @@
 #include <iostream>
 #include <math.h>
+#include <chrono>
 #include "./methods/BarrierFunctionsMethod.cpp"
 #include "./methods/PenaltyFunctionsMethod.cpp"
-#include <chrono>
 
 const double func(const Point& point) {
   const double x1 = point.coords[0];
