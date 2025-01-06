@@ -6,9 +6,6 @@
 #include "../../myObjects/matrix.hpp"
 #include "../../myObjects/vector.hpp"
 
-typedef std::vector<std::vector<double>> vectorMatrix;
-using namespace helpfulFunctions;
-
 class NewtonRaphsonMethod {
 public:
   NewtonRaphsonMethod(std::function<double(Point)> func)

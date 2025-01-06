@@ -6,9 +6,6 @@
 #include "../../helpfulFunctions.cpp"
 #include "../variables.h"
 
-typedef std::vector<std::vector<double>> vectorMatrix;
-using namespace helpfulFunctions;
-
 class MarquardtMethod {
 public:
   MarquardtMethod(std::function<double(Point)> func)
@@ -42,8 +39,8 @@ private:
 
     for(int k = 0; k <= M; k++) {
       myObjects::Vector<double> grad_f_x = {
-        getFirstDerivative(func, basePoint, 1), 
-        getFirstDerivative(func, basePoint, 2)
+        helpfulFunctions::getFirstDerivative(func, basePoint, 1), 
+        helpfulFunctions::getFirstDerivative(func, basePoint, 2)
       };
 
       std::cout << std::setw(4) << k << " | " << std::setw(12) << basePoint.coords[0] << " | " << std::setw(12) << basePoint.coords[1] << " | ";
@@ -53,7 +50,7 @@ private:
         return std::make_pair(basePoint, grad_f_x.getNorm());
       }
 
-      const myObjects::Matrix<double> H_x = getHesseMatrix(func, basePoint); 
+      const myObjects::Matrix<double> H_x = helpfulFunctions::getHesseMatrix(func, basePoint); 
       const myObjects::Vector<double> sk = 
         (H_x + (I * lambda)).getInversedMatrix() * (grad_f_x * -1.0);
 
