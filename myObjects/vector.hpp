@@ -1,5 +1,6 @@
 #include <initializer_list>
 #include <memory>
+#include <iostream>
 
 #ifndef VECTOR_H
 #define VECTOR_H
