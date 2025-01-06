@@ -1,6 +1,8 @@
 #include <iostream>
 #include <functional>
-#include "../../point.cpp"
+#include "../../myObjects/vector.hpp"
+#include "../../myObjects/matrix.hpp"
+#include "../../myObjects/point.cpp"
 #include "../../helpfulFunctions.cpp"
 #include "../variables.h"
 
@@ -35,29 +37,27 @@ private:
   const std::pair<Point, double> result() const {
     const int M = variables::maxIterationsNum;
     Point basePoint = variables::START_POINT;
-    double lambda = pow(10, 4);
-    const vectorMatrix I = {{1, 0}, {0, 1}};
+    double lambda = 1e4;
+    const myObjects::Matrix<double> I = {{1.0, 0.0}, {0.0, 1.0}};
 
     for(int k = 0; k <= M; k++) {
-      const std::vector<double> grad_f_x = { 
+      myObjects::Vector<double> grad_f_x = {
         getFirstDerivative(func, basePoint, 1), 
         getFirstDerivative(func, basePoint, 2)
       };
 
       std::cout << std::setw(4) << k << " | " << std::setw(12) << basePoint.coords[0] << " | " << std::setw(12) << basePoint.coords[1] << " | ";
-      std::cout << std::setw(12) << func(basePoint) << " | " << std::setw(12) << grad_f_x[0] << " | " << std::setw(12) << grad_f_x[1] << " | " << std::setw(12) << getNorm(grad_f_x) << "\n";
+      std::cout << std::setw(12) << func(basePoint) << " | " << std::setw(12) << grad_f_x[0] << " | " << std::setw(12) << grad_f_x[1] << " | " << std::setw(12) << grad_f_x.getNorm() << "\n";
 
-      if(getNorm(grad_f_x) < variables::EPS1) {
-        return std::make_pair(basePoint, getNorm(grad_f_x));
+      if(grad_f_x.getNorm() < variables::EPS1) {
+        return std::make_pair(basePoint, grad_f_x.getNorm());
       }
 
-      const vectorMatrix H_x = getHesseMatrix(func, basePoint);      
-      const std::vector<double> sk = 
-        productMatrixByVector(
-          getInversedMatrix(sumMatrixPerMatrix(H_x, productMatrixByScalar(lambda, I))),
-          productVectorByScalar(-1.0, grad_f_x));
+      const myObjects::Matrix<double> H_x = getHesseMatrix(func, basePoint); 
+      const myObjects::Vector<double> sk = 
+        (H_x + (I * lambda)).getInversedMatrix() * (grad_f_x * -1.0);
 
-      const double f_k = func(basePoint);
+      double f_k = func(basePoint);
       basePoint += Point(sk);
 
       while(func(basePoint) >= f_k) {

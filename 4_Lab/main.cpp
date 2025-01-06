@@ -1,7 +1,7 @@
 #include <iostream>
 #include <math.h>
 #include <chrono>
-#include "../point.cpp"
+#include "../myObjects/point.cpp"
 #include "./variables.h"
 #include "./methods/MarquardtMethod.cpp"
 #include "./methods/NewtonRaphsonMethod.cpp"
