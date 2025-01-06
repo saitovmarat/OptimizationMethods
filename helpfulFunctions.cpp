@@ -5,7 +5,8 @@
 #include <functional>
 #include <iomanip>
 #include <math.h>
-#include "./point.cpp"
+#include "./myObjects/point.cpp"
+#include "./myObjects/matrix.hpp"
 
 typedef std::vector<std::vector<double>> vectorMatrix;
 
@@ -121,25 +122,18 @@ namespace helpfulFunctions {
     return result;
   }
 
-  /// @brief Функция для получения определителя матрицы размером 2 на 2
-  /// @param matrix матрица размером 2 на 2
-  /// @return определитель матрицы
-  double getDeterminant(vectorMatrix matrix) {
-    return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
-  }
-
   /// @brief Функция для получения обратной матрицы размером 2 на 2
   /// @param matrix матрица размером 2 на 2
   /// @return обратная матрица
-  vectorMatrix getInversedMatrix(vectorMatrix matrix) 
+  const myObjects::Matrix<double> getInversedMatrix(const myObjects::Matrix<double>& matrix) 
   {
-    const double determinant = getDeterminant(matrix);
+    const double determinant = matrix.getDeterminant();
     if (determinant == 0) {
       return {};
     } 
     return {
-      { matrix[1][1] / determinant, -matrix[0][1] / determinant },
-      { -matrix[1][0] / determinant, matrix[0][0] / determinant }
+      { matrix(1, 1) / determinant, -matrix(0, 1) / determinant },
+      { -matrix(1, 0) / determinant, matrix(0, 0) / determinant }
     };
   }
 

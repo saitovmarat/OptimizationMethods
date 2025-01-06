@@ -1,18 +1,20 @@
 #include <vector>
 #include <cmath>
+#include "./vector.hpp"
+
 #ifndef POINT_H
 #define POINT_H
 
 struct Point
 {
-  std::vector<double> coords = {};
+  myObjects::Vector<double> coords = {};
 
   Point() {}
-  Point(std::vector<double> coords) : coords(coords) {}
+  Point(myObjects::Vector<double> coords) : coords(coords) {}
 
   Point operator+(const Point& point) const
   {
-    std::vector<double> resultCoords;
+    myObjects::Vector<double> resultCoords;
     for (size_t i = 0; i < coords.size(); ++i)
     {
       resultCoords.push_back(coords[i] + point.coords[i]);
@@ -21,7 +23,7 @@ struct Point
   }
 
   Point operator+(const double& num) {
-    std::vector<double> resultCoords;
+    myObjects::Vector<double> resultCoords;
     for (size_t i = 0; i < coords.size(); ++i)
     {
       resultCoords.push_back(coords[i] + num);
@@ -31,7 +33,7 @@ struct Point
 
   Point operator-(const Point& point) const
   {
-    std::vector<double> resultCoords;
+    myObjects::Vector<double> resultCoords;
     for (size_t i = 0; i < coords.size(); ++i)
     {
       resultCoords.push_back(coords[i] - point.coords[i]);
@@ -40,7 +42,7 @@ struct Point
   }
 
   Point operator-(const double& num) {
-    std::vector<double> resultCoords;
+    myObjects::Vector<double> resultCoords;
     for (size_t i = 0; i < coords.size(); ++i)
     {
       resultCoords.push_back(coords[i] - num);
