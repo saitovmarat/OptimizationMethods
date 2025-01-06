@@ -2,8 +2,9 @@
 #include <iostream>
 #include "../variables.h"
 #include "../../helpfulFunctions.cpp"
-
-typedef std::vector<std::vector<double>> vectorMatrix;
+#include "../../myObjects/vector.hpp"
+#include "../../myObjects/point.cpp"
+#include "../../myObjects/matrix.hpp"
 
 /// @brief Метод штрафных функций для нахождения минимума функции двух переменных через метод Ньютона
 class PenaltyFunctionsMethod {
@@ -53,21 +54,20 @@ private:
     double ri = variables::R_01;
     
     for(int k = 1; k <= M; k++) {
-      const std::vector<double> grad_f_x = { 
+      const myObjects::Vector<double> grad_f_x = { 
         helpfulFunctions::getFirstDerivative(funcWithPenalty, basePoint, ri, 1), 
         helpfulFunctions::getFirstDerivative(funcWithPenalty, basePoint, ri, 2)
       };
-      const vectorMatrix H_x = helpfulFunctions::getHesseMatrix(funcWithPenalty, basePoint, ri);
-      const vectorMatrix inversed_H_x = helpfulFunctions::getInversedMatrix(H_x);
+      const myObjects::Matrix<double> H_x = helpfulFunctions::getHesseMatrix(funcWithPenalty, basePoint, ri);
+      const myObjects::Matrix<double> inversed_H_x = H_x.getInversedMatrix();
 
       const double penalty = getPenalty(basePoint, ri);
 
-      if(abs(penalty) <= variables::EPS) 
-      {
+      if(abs(penalty) <= variables::EPS) {
         return std::make_pair(basePoint, abs(penalty));
       }
 
-      basePoint -= helpfulFunctions::productMatrixByVector(inversed_H_x, grad_f_x);
+      basePoint -= inversed_H_x * grad_f_x;
 
       std::cout << std::setw(4) << k << " | " << std::setw(10) << basePoint.coords[0] << " | " << std::setw(10) << basePoint.coords[1] << "\n";
 

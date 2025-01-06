@@ -1,5 +1,5 @@
 #include <math.h>
-#include "../point.cpp"
+#include "../myObjects/point.cpp"
 #include "./methods/Hook-JeevesMethod.cpp"
 #include "./methods/NewtonMethod.cpp"
 #include <chrono>

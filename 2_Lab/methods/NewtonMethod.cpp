@@ -1,9 +1,10 @@
-#include <iostream>
 #include <functional>
-#include <iomanip>
-#include <math.h>
+#include <iostream>
 #include "../variables.h"
 #include "../../helpfulFunctions.cpp"
+#include "../../myObjects/vector.hpp"
+#include "../../myObjects/point.cpp"
+#include "../../myObjects/matrix.hpp"
 
 /// @brief Метод Ньютона для нахождения минимума функции двух переменных 
 class NewtonMethod
@@ -38,18 +39,18 @@ private:
     Point basePoint = variables::START_POINT;
 
     for(int k = 1; k <= M; k++) {
-      const std::vector<double> grad_f_x = { 
+      const myObjects::Vector<double> grad_f_x = { 
         helpfulFunctions::getFirstDerivative(func, basePoint, 1), 
         helpfulFunctions::getFirstDerivative(func, basePoint, 2)
       };
-      const vectorMatrix H_x = helpfulFunctions::getHesseMatrix(func, basePoint);
-      const vectorMatrix inversed_H_x = helpfulFunctions::getInversedMatrix(H_x);
+      const myObjects::Matrix<double> H_x = helpfulFunctions::getHesseMatrix(func, basePoint);
+      const myObjects::Matrix<double> inversed_H_x = H_x.getInversedMatrix();
       
-      if(helpfulFunctions::getNorm(grad_f_x) < variables::EPS) {
-        return std::make_pair(basePoint, helpfulFunctions::getNorm(grad_f_x));
+      if(grad_f_x.getNorm() < variables::EPS) {
+        return std::make_pair(basePoint, grad_f_x.getNorm());
       }
 
-      basePoint -= helpfulFunctions::productMatrixByVector(inversed_H_x, grad_f_x);
+      basePoint -= inversed_H_x * grad_f_x;
 
       std::cout << std::setw(4) << k << " | " << std::setw(10) << basePoint.coords[0] << " | " << std::setw(10) << basePoint.coords[1] << "\n";
     }  

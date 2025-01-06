@@ -1,9 +1,8 @@
+#include "../myObjects/point.cpp"
+
 #ifndef VARIABLES_H
 #define VARIABLES_H
 
-#include "../point.cpp"
-
-typedef std::vector<std::vector<double>> vectorMatrix;
 
 namespace variables {
   const Point START_POINT = Point({0, 0});
