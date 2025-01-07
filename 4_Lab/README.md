@@ -5,7 +5,7 @@
 ![xy](https://github.com/user-attachments/assets/9c73dfb2-9aaf-49a7-a0b6-3d11b44caa23)
 
 ## Метод Ньютона-Рафсона
-![Newton-Raphson]()
+![Newton-Raphson]
 
 ## Метод Марквардта
-![Markvardt]()
+![Markvardt](https://github.com/user-attachments/assets/39ae490c-d7ac-4e8c-99a6-b5b41f29958d)
