@@ -13,6 +13,7 @@ private:
   unsigned cols;
 
 public:
+  Matrix();
   Matrix(unsigned _rows, unsigned _cols, const T& _initial);
   Matrix(const Matrix<T>& rhs);
   Matrix(const std::vector<std::vector<T>>& matrix);
@@ -47,11 +48,14 @@ public:
 };
 
 template<typename T>
+Matrix<T>::Matrix() {
+  rows = 0;
+  cols = 0;
+}
+
+template<typename T>
 Matrix<T>::Matrix(unsigned _rows, unsigned _cols, const T& _initial) {
   mat.resize(_rows, std::vector<T>(_cols, _initial));
-  // for (unsigned i = 0; i < mat.size(); i++) {
-  //   mat[i].resize(_cols, _initial);
-  // }
   rows = _rows;
   cols = _cols;
 }

@@ -20,14 +20,13 @@ public:
   }
 
   void outputResults() {
-    std::cout << "-------------------------------\n";
+    std::cout << "--------------------------------------------\n";
     std::cout << "1) Метод штрафных функций\n"; 
-    std::cout << "-----+------------+------------\n";
-    std::cout << std::setw(4) << "k" << " | " << std::setw(10) << "x1" << " | " << std::setw(10) << "x2" << "\n";
-    std::cout << "-----+------------+------------\n";
-    std::cout << std::setw(4) << 0 << " | " << std::setw(10) << variables::START_POINT.coords[0] << " | " << std::setw(10) << variables::START_POINT.coords[1] << "\n";
+    std::cout << "-----+------------+------------+------------\n";
+    std::cout << std::setw(4) << "k" << " | " << std::setw(10) << "x1" << " | " << std::setw(10) << "x2" << " | " << std::setw(10) << "P(X, r^k)" << "\n";
+    std::cout << "-----+------------+------------+------------\n";
     const std::pair<Point, double> methodResult = result();
-    std::cout << "-----+------------+------------\n";
+    std::cout << "-----+------------+------------+------------\n";
     std::cout << "Точка минимума X: " << "[" << methodResult.first.coords[0] << "; " << methodResult.first.coords[1] << "]" << "\n";
     std::cout << "Значение модуля функции ошибки в этой точке |P(X, r^k)| = " << methodResult.second << "\n\n";
   };    
@@ -63,14 +62,13 @@ private:
 
       const double penalty = getPenalty(basePoint, ri);
 
+      std::cout << std::setw(4) << k << " | " << std::setw(10) << basePoint.coords[0] << " | " << std::setw(10) << basePoint.coords[1] << " | " << std::setw(10) << abs(penalty) << "\n";
+
       if(abs(penalty) <= variables::EPS) {
         return std::make_pair(basePoint, abs(penalty));
       }
 
       basePoint -= inversed_H_x * grad_f_x;
-
-      std::cout << std::setw(4) << k << " | " << std::setw(10) << basePoint.coords[0] << " | " << std::setw(10) << basePoint.coords[1] << "\n";
-
       ri *= variables::C1;
     }  
     throw std::runtime_error("Метод Штрафов не сходится");

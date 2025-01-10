@@ -12,7 +12,7 @@ const double func(const Point& point) {
   const double x1 = point.coords[0];
   const double x2 = point.coords[1];
 
-  const double result = a*pow(x1, 2) + 2*x1*x2 + b*pow(x2, 2) - 2*x1 - 3*x2;  
+  const double result = a*x1*x1 + 2*x1*x2 + b*x2*x2 - 2*x1 - 3*x2;  
   return result;
 }
 

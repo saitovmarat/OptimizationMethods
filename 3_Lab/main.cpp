@@ -19,9 +19,13 @@ const std::vector<double> areaRestrictions(const Point& point) {
 int main() {
   auto start = std::chrono::high_resolution_clock::now();
   
-  PenaltyFunctionsMethod(func, areaRestrictions).outputResults();
-  BarrierFunctionsMethod(func, areaRestrictions).outputResults();
-
+  try {
+    PenaltyFunctionsMethod(func, areaRestrictions).outputResults();
+    BarrierFunctionsMethod(func, areaRestrictions).outputResults();
+  }
+  catch(const std::exception& e) {
+    std::cerr << e.what() << '\n';
+  }
   auto end = std::chrono::high_resolution_clock::now();
   std::chrono::duration<double> duration = end - start;
   std::cout << "Время выполнения: " << duration.count() << " секунд" << std::endl;
