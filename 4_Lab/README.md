@@ -7,4 +7,6 @@
 ## Метод Марквардта
 ![Markvardt](https://github.com/user-attachments/assets/39ae490c-d7ac-4e8c-99a6-b5b41f29958d)
 ### График движения к точке минимума
-![image](https://github.com/user-attachments/assets/6ae40770-a4a3-4343-8d8f-c3100858362a)
+![image](https://github.com/user-attachments/assets/78af5114-5425-4bd7-b26e-e8e2800ce1e5)
+![image](https://github.com/user-attachments/assets/cc135d86-e604-4491-9bb0-2db1d8c6a7a9)
+
