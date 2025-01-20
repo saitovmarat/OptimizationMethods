@@ -5,6 +5,7 @@
 #include <functional>
 #include <iomanip>
 #include <math.h>
+#include <cmath>
 #include "./myObjects/point.cpp"
 #include "./myObjects/matrix.hpp"
 
@@ -27,21 +28,6 @@ namespace helpfulFunctions {
     return (func(Point({x1 + h*i, x2 + h*j})) - func(Point({x1 - h*i, x2 - h*j}))) / (2 * h); 
   }
 
-  /// @brief Получение первой производной штрафной функции двух переменных по выбранной переменной
-  /// @param func функция вида f(x1, x2, ri)
-  /// @param point значение двух переменных
-  /// @param ri значение штрафа
-  /// @param deravativeVariableInd индекс выбранной переменной 
-  /// @return первая производная
-  double getFirstDerivative(std::function<double(Point, double)> func, Point point, double ri, int deravativeVariableInd) {
-    double x1 = point.coords[0];
-    double x2 = point.coords[1];
-    double h = 0.1;
-    int i = deravativeVariableInd == 1 ? 1 : 0;
-    int j = deravativeVariableInd == 2 ? 1 : 0;
-    const double result = (func(Point({x1 + h*i, x2 + h*j}), ri) - func(Point({x1 - h*i, x2 - h*j}), ri)) / (2 * h);
-    return result; 
-  }
 
   /// @brief Получение второй производной функции двух переменных по выбранной переменной
   /// @param func функция вида f(x1, x2)
@@ -154,8 +140,7 @@ namespace helpfulFunctions {
   const double squareCut(const std::vector<double>& area) {
     double areaSum = 0.0;
     for(double area_i : area) {
-      areaSum += pow(area_i, 2);
-      areaSum += (area_i > 0) ? pow(area_i, 2) : 0.0;
+      areaSum += pow(area_i, 2) + area_i > 0 ? pow(area_i, 2) : 0;
     }
     return areaSum;
   }
@@ -170,6 +155,21 @@ namespace helpfulFunctions {
       areaSum += area_i;
     }
     return 1.0 / areaSum;
+  }
+
+  /// @brief Функция для вычисления штрафа за нарушение ограничений,
+  ///        используемого в методе барьерных функций.
+  /// @param area вектор ограничений
+  /// @return штраф
+  const double logPenaltyFunc(const std::vector<double>& area, const double ri) {
+    if(area[0] >= 0 || area[1] >= 0) {
+      return float('inf');
+    }
+    double penalty = 0.0;
+    for(double area_i : area) {
+      penalty = -ri * log(-area_i);
+    }
+    return penalty;
   }
 
   /// @brief Умножение матриц
