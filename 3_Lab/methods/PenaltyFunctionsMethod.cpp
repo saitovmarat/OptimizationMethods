@@ -28,49 +28,76 @@ public:
     const std::pair<Point, double> methodResult = result();
     std::cout << "-----+------------+------------+------------\n";
     std::cout << "Точка минимума X: " << "[" << methodResult.first.coords[0] << "; " << methodResult.first.coords[1] << "]" << "\n";
-    std::cout << "Значение модуля функции ошибки в этой точке |P(X, r^k)| = " << methodResult.second << "\n\n";
+    std::cout << "Значение функции в этой точке f(X) = " << func(methodResult.first) << "\n\n";
   };    
 
 private:
+  double ri = variables::R_01;
+
   std::function<double(Point)> func;
   std::function<std::vector<double>(Point)> areaRestrictions;
-  std::function<double(Point, double ri)> funcWithPenalty = {
-    [this](Point point, double ri) -> double {
-      return func(point) + getPenalty(point, ri);
+  std::function<double(Point)> funcWithPenalty = {
+    [this](Point point) -> double {
+      return func(point) + getPenalty(point);
     }
   };
 
-  const double getPenalty(Point point, double ri) const {
+  const double getPenalty(Point point) {
     const std::vector<double> area = areaRestrictions(point);
-    const double squareCutResult = 0.5 * ri * helpfulFunctions::squareCut(area);
-    return squareCutResult;
+    return 0.5 * ri * helpfulFunctions::squareCut(area);
+  }
+
+  const double getStep(Point point, myObjects::Vector<double> gradient) {
+    double step = variables::LAMBDA;
+    double initialFunc = funcWithPenalty(point);
+
+    while(true) {
+      const Point nextPoint = point - gradient * step;
+      const double newFunc = funcWithPenalty(nextPoint);
+      if(newFunc <= initialFunc - variables::ALPHA * step * gradient.getNorm()) {
+        break;
+      }
+      step *= variables::BETA;
+    }
+    return step;
   }
 
 private:
-  const std::pair<Point, double> result() const {
-    const double M = 300;
-    Point basePoint = variables::START_POINT;
-    double ri = variables::R_01;
+  const Point getMinPoint(Point point) {
+    Point currentPoint = point;
+    const double M = variables::MAX_ITERATIONS_NUM;
     
     for(int k = 1; k <= M; k++) {
       const myObjects::Vector<double> grad_f_x = { 
-        helpfulFunctions::getFirstDerivative(funcWithPenalty, basePoint, ri, 1), 
-        helpfulFunctions::getFirstDerivative(funcWithPenalty, basePoint, ri, 2)
+        helpfulFunctions::getFirstDerivative(funcWithPenalty, currentPoint, 1), 
+        helpfulFunctions::getFirstDerivative(funcWithPenalty, currentPoint, 2)
       };
-      const myObjects::Matrix<double> H_x = helpfulFunctions::getHesseMatrix(funcWithPenalty, basePoint, ri);
-      const myObjects::Matrix<double> inversed_H_x = H_x.getInversedMatrix();
-
-      const double penalty = getPenalty(basePoint, ri);
-
-      std::cout << std::setw(4) << k << " | " << std::setw(10) << basePoint.coords[0] << " | " << std::setw(10) << basePoint.coords[1] << " | " << std::setw(10) << abs(penalty) << "\n";
-
-      if(abs(penalty) <= variables::EPS) {
-        return std::make_pair(basePoint, abs(penalty));
+      const double step = getStep(currentPoint, grad_f_x);
+      Point nextPoint = currentPoint - grad_f_x * step;
+      
+      if(abs(funcWithPenalty(nextPoint) - funcWithPenalty(currentPoint)) <= variables::EPS) {
+        return nextPoint;
       }
 
-      basePoint -= inversed_H_x * grad_f_x;
-      ri *= variables::C1;
+      currentPoint = nextPoint;
     }  
+    return Point({0.0, 0.0});
+  }
+  const std::pair<Point, double> result() {
+    const int M = variables::MAX_ITERATIONS_NUM;
+    Point currentPoint = variables::START_POINT;
+    
+    for(int k = 1; k < M; k++) {
+      currentPoint = getMinPoint(currentPoint);
+      const double penalty = getPenalty(currentPoint);
+
+      std::cout << std::setw(4) << k << " | " << std::setw(10) << currentPoint.coords[0] << " | " << std::setw(10) << currentPoint.coords[1] << " | " << std::setw(10) << abs(penalty) << "\n";
+
+      if(abs(penalty) <= variables::EPS) {
+        return std::make_pair(currentPoint, abs(penalty));
+      }
+      ri *= variables::C1;
+    }
     throw std::runtime_error("Метод Штрафов не сходится");
   }
 };

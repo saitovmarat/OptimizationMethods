@@ -18,61 +18,90 @@ public:
   }
 
   void outputResults() {
-    std::cout << "-------------------------------\n";
+    std::cout << "--------------------------------------------\n";
     std::cout << "2) Метод барьерных функций\n"; 
-    std::cout << "-----+------------+------------\n";
-    std::cout << std::setw(4) << "k" << " | " << std::setw(10) << "x1" << " | " << std::setw(10) << "x2" << "\n";
-    std::cout << "-----+------------+------------\n";
-    std::cout << std::setw(4) << 0 << " | " << std::setw(10) << variables::START_POINT.coords[0] << " | " << std::setw(10) << variables::START_POINT.coords[1] << "\n";
+    std::cout << "-----+------------+------------+------------\n";
+    std::cout << std::setw(4) << "k" << " | " << std::setw(10) << "x1" << " | " << std::setw(10) << "x2" << " | " << std::setw(10) << "P(X, r^k)" << "\n";
+    std::cout << "-----+------------+------------+------------\n";
     const std::pair<Point, double> methodResult = result();
-    std::cout << "-----+------------+------------\n";
+    std::cout << "-----+------------+------------+------------\n";
     std::cout << "Точка минимума X: " << "[" << methodResult.first.coords[0] << "; " << methodResult.first.coords[1] << "]" << "\n";
-    std::cout << "Значение модуля функции ошибки в этой точке |P(X, r^k)| = " << methodResult.second << "\n\n";
+    std::cout << "Значение функции в этой точке f(X) = " << func(methodResult.first) << "\n\n";
   };    
 
 private:
+  double ri = variables::R_02;
+
   std::function<double(Point)> func;
   std::function<std::vector<double>(Point)> areaRestrictions;
-  std::function<double(Point, double ri)> funcWithPenalty = {
-    [this](Point point, double ri) -> double {
-      return func(point) - getPenalty(point, ri);
+  std::function<double(Point)> funcWithPenalty = {
+    [this](Point point) -> double {
+      const std::vector<double> area = areaRestrictions(point);
+      if(area[0] >= 0 || area[1] >= 0) {
+        return float('inf');
+      }
+      return func(point) + getPenalty(point);
     }
   };
 
-  const double getPenalty(Point point, double ri) const { 
+  const double getPenalty(Point point) {
     const std::vector<double> area = areaRestrictions(point);
-    const double reversePenaltyResult = ri * helpfulFunctions::reversePenaltyFunc(area);
-    return reversePenaltyResult;    
+    return helpfulFunctions::logPenaltyFunc(area, ri);
+  }
+
+  const double getStep(Point point, myObjects::Vector<double> gradient) {
+    double step = variables::LAMBDA;
+    double initialFunc = funcWithPenalty(point);
+    while(true) {
+      const Point nextPoint = point - gradient * step;
+      const double newFunc = funcWithPenalty(nextPoint);
+      if(newFunc <= initialFunc - variables::ALPHA * step * gradient.getNorm()) {
+        break;
+      }
+      step *= variables::BETA;
+    }
+    return step;
   }
 
 private:
-  const std::pair<Point, double> result() const {
-    const double M = 300;
-    Point basePoint = variables::START_POINT;
-    double ri = variables::R_02;
+  const Point getMinPoint(Point point) {
+    Point currentPoint = point;
+    const double M = variables::MAX_ITERATIONS_NUM;
     
     for(int k = 1; k <= M; k++) {
       const myObjects::Vector<double> grad_f_x = { 
-        helpfulFunctions::getFirstDerivative(funcWithPenalty, basePoint, ri, 1), 
-        helpfulFunctions::getFirstDerivative(funcWithPenalty, basePoint, ri, 2)
+        helpfulFunctions::getFirstDerivative(funcWithPenalty, currentPoint, 1), 
+        helpfulFunctions::getFirstDerivative(funcWithPenalty, currentPoint, 2)
       };
-      const myObjects::Matrix<double> H_x = helpfulFunctions::getHesseMatrix(funcWithPenalty, basePoint, ri);
-      const myObjects::Matrix<double> inversed_H_x = H_x.getInversedMatrix();
-
-      const double penalty = getPenalty(basePoint, ri);
-
-      if(abs(penalty) <= variables::EPS) 
-      {
-        return std::make_pair(basePoint, abs(penalty));
+      const double step = getStep(currentPoint, grad_f_x);
+      Point nextPoint = currentPoint - grad_f_x * step;
+      
+      if(abs(funcWithPenalty(nextPoint) - funcWithPenalty(currentPoint)) <= variables::EPS) {
+        return nextPoint;
       }
 
-      basePoint -= inversed_H_x * grad_f_x;
-      
-      std::cout << std::setw(4) << k << " | " << std::setw(10) << basePoint.coords[0] << " | " << std::setw(10) << basePoint.coords[1] << "\n";
-
-      ri /= variables::C2;
+      currentPoint = nextPoint;
     }  
-    throw std::runtime_error("Метод Барьерных функций не сходится");
+    return Point({0.0, 0.0});
   }
+  const std::pair<Point, double> result() {
+    const int M = variables::MAX_ITERATIONS_NUM;
+    Point currentPoint = variables::START_POINT;
+    
+    for(int k = 1; k < M; k++) {
+      currentPoint = getMinPoint(currentPoint);
+      const double penalty = getPenalty(currentPoint);
 
+      std::cout << std::setw(4) << k << " | " << std::setw(10) << currentPoint.coords[0] << " | " << std::setw(10) << currentPoint.coords[1] << " | " << std::setw(10) << abs(penalty) << "\n";
+
+      if(areaRestrictions(currentPoint)[0] <= 0 
+        && areaRestrictions(currentPoint)[1] <= 0 
+        && abs(penalty) <= variables::EPS) 
+      {
+        return std::make_pair(currentPoint, abs(penalty));
+      }
+      ri /= variables::C2;
+    }
+    throw std::runtime_error("Метод Штрафов не сходится");
+  }
 };
