@@ -162,9 +162,6 @@ namespace helpfulFunctions {
   /// @param area вектор ограничений
   /// @return штраф
   const double logPenaltyFunc(const std::vector<double>& area, const double ri) {
-    if(area[0] >= 0 || area[1] >= 0) {
-      return float('inf');
-    }
     double penalty = 0.0;
     for(double area_i : area) {
       penalty = -ri * log(-area_i);
