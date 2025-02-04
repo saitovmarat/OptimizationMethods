@@ -1,6 +1,7 @@
 #include <initializer_list>
 #include <memory>
 #include <iostream>
+#include <math.h>
 
 #ifndef VECTOR_H
 #define VECTOR_H
@@ -33,7 +34,7 @@ public:
 
   T& operator[](int index);
   const T& operator[](int index) const;
-  Vector operator*(T scalar) const;
+  Vector<T> operator*(T scalar) const;
   void resize();
   Vector& operator=(const Vector& other);
   T get(int index);
@@ -162,7 +163,7 @@ const T& Vector<T>::operator[](int index) const {
 
 template<typename T>
 Vector<T> Vector<T>::operator*(T scalar) const {
-  Vector result(*this);
+  Vector<T> result(*this);
   for (int i = 0; i < current; ++i) {
     result.arr[i] = arr[i] * scalar;
   }
