@@ -94,10 +94,7 @@ private:
 
       std::cout << std::setw(4) << k << " | " << std::setw(10) << currentPoint.coords[0] << " | " << std::setw(10) << currentPoint.coords[1] << " | " << std::setw(10) << abs(penalty) << "\n";
 
-      if(areaRestrictions(currentPoint)[0] <= 0 
-        && areaRestrictions(currentPoint)[1] <= 0 
-        && abs(penalty) <= variables::EPS) 
-      {
+      if(abs(penalty) <= variables::EPS) {
         return std::make_pair(currentPoint, abs(penalty));
       }
       ri /= variables::C2;
