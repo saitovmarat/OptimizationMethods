@@ -16,7 +16,7 @@ public:
   {
     std::cout << "\n";
     std::cout << "2.2) Метод потенциалов\n";
-    const int methodResult = result();
+    const int methodResult = getMinDeliveryCost();
     std::cout << "Общая стоимость плана перевозки:\nZ = " << methodResult << "\n";
   }
 
@@ -142,13 +142,14 @@ private:
     return sum;
   }
 
-  const int result() {
+  const int getMinDeliveryCost() {
     vectorMatrixInt deliveryCosts = variables::DELIVERY_COSTS;
     std::vector<int> stocks = variables::STOCKS;
     std::vector<int> needs = variables::NEEDS;
     vectorMatrixInt currentPlan = startingPlan;
 
     while (true) {
+      outputTable(currentPlan);
       std::vector<std::vector<int>> potentials = getPotentials();
       std::vector<int> potentialsForProviders = potentials[0];
       std::vector<int> potentialsForConsumers = potentials[1];
@@ -178,13 +179,14 @@ private:
           }
         }
       }
-      int elementToAddToBasisRow = minEvaluationInd.first;
-      int elementToAddToBasisСol = minEvaluationInd.second;
-      basis[elementToAddToBasisRow][elementToAddToBasisСol] = 1;
 
       if (noNegativeEvaluations(evaluations)) {
         return countDeliverySum(currentPlan); 
       }
+
+      int elementToAddToBasisRow = minEvaluationInd.first;
+      int elementToAddToBasisСol = minEvaluationInd.second;
+      basis[elementToAddToBasisRow][elementToAddToBasisСol] = 1;
 
       std::vector<std::pair<int, int>> plusElementsIndexes;
       std::vector<std::pair<int, int>> minusElementsIndexes;
@@ -220,7 +222,6 @@ private:
         int col = minusElementsIndexes[i].second;
         currentPlan[row][col] -= minElementFromMinuses;
       }
-      outputTable(currentPlan);
     }
 
     return 0;
