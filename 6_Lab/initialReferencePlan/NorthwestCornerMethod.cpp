@@ -43,29 +43,28 @@ private:
 
   }
   const int result() {
-    
     vectorMatrixInt deliveryCosts = variables::DELIVERY_COSTS;
     std::vector<int> stocks = variables::STOCKS;
     std::vector<int> needs = variables::NEEDS;
     int result = 0;
 
     int firstValidColumnInd = 0;
-    for (size_t i = 0; i < deliveryCosts.size(); i++) { // по запасам
-      for (size_t j = firstValidColumnInd; j < deliveryCosts[i].size(); j++) { // по потребностям
-        int quantity = std::min(needs[j], stocks[i]);
-        outputCurrentPlan(i, j, quantity);
-        result += deliveryCosts[i][j] * quantity;
-        stocks[i] -= quantity;
-        needs[j] -= quantity;
+    for (size_t row = 0; row < deliveryCosts.size(); row++) { // по запасам
+      for (size_t col = firstValidColumnInd; col < deliveryCosts[row].size(); col++) { // по потребностям
+        int quantity = std::min(needs[col], stocks[row]);
+        outputCurrentPlan(row, col, quantity);
+        result += deliveryCosts[row][col] * quantity;
+        stocks[row] -= quantity;
+        needs[col] -= quantity;
 
-        if (needs[j] == 0) {
+        if (needs[col] == 0) {
           firstValidColumnInd++;
         }
-        if (stocks[i] == 0) {
-          goto nextIteration;
+        if (stocks[row] == 0) {
+          goto nextRow;
         }
       }
-      nextIteration:;
+      nextRow:;
     }
     return result;
   }

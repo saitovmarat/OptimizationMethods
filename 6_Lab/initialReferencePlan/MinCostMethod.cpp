@@ -51,12 +51,12 @@ private:
     while (true) {
       int minCost = std::numeric_limits<int>::max();
       int minRow = -1, minCol = -1;
-      for (size_t i = 0; i < deliveryCosts.size(); i++) { // по запасам
-        for (size_t j = 0; j < deliveryCosts[i].size(); j++) { // по потребностям
-          if (stocks[i] > 0 && needs[j] > 0 && deliveryCosts[i][j] < minCost) {
-            minCost = deliveryCosts[i][j];
-            minRow = i;
-            minCol = j;
+      for (size_t row = 0; row < deliveryCosts.size(); row++) { // по запасам
+        for (size_t col = 0; col < deliveryCosts[row].size(); col++) { // по потребностям
+          if (stocks[row] > 0 && needs[col] > 0 && deliveryCosts[row][col] < minCost) {
+            minCost = deliveryCosts[row][col];
+            minRow = row;
+            minCol = col;
           }
         }
       }
