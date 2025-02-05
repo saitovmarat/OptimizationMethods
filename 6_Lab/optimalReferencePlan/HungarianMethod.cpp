@@ -5,6 +5,8 @@
 #include <numeric>
 #include <tuple>
 
+typedef std::vector<std::vector<int>> vectorMatrixInt; 
+
 class HungarianMethod {
 public:
   HungarianMethod() = default;
