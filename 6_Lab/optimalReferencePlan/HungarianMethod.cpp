@@ -15,7 +15,7 @@ public:
   {
     std::cout << "\n";
     std::cout << "2.1) Венгерский метод\n";
-    const int methodResult = result();
+    const int methodResult = getMinDeliveryCost();
     std::cout << "Общая стоимость плана перевозки:\nZ = " << methodResult << "\n";
   }
 
@@ -32,7 +32,7 @@ private:
     std::cout << "-------------------------\n";
   }
 
-  int getResult(vectorMatrixInt matrix) {
+  int getDeliveryCost(vectorMatrixInt matrix) {
     int result = 0;
     vectorMatrixInt deliveryCosts = variables::DELIVERY_COSTS;
     for(int row = 0; row < matrix.size(); row++) {
@@ -41,6 +41,34 @@ private:
       }
     }
     return result;
+  }
+
+  vectorMatrixInt getInitialPlan(vectorMatrixInt C) {
+    vectorMatrixInt currentPlan = {
+      {0, 0, 0},
+      {0, 0, 0},
+      {0, 0, 0}
+    };
+    std::vector<int> stocks = variables::STOCKS;
+    std::vector<int> needs = variables::NEEDS;
+    
+    // Построение начального опорного плана
+    for (int i = 0; i < C.size(); i++) {
+      for (int j = 0; j < C[i].size(); j++) {
+        if (C[i][j] != 0) {
+          continue;
+        }
+        int quantity = std::min(stocks[i], needs[j]);
+        currentPlan[i][j] = quantity;
+        stocks[i] -= quantity;
+        needs[j] -= quantity;
+        if (stocks[i] == 0) { 
+          goto nextIteration;
+        }
+      }
+      nextIteration:;
+    }
+    return currentPlan;
   }
 
   vectorMatrixInt getPreprocessedMatrix(vectorMatrixInt matrix) {
@@ -84,46 +112,31 @@ private:
     return minFromOuterZone;
   }
 
-  const int result() {
+  const int getMinDeliveryCost() {
     vectorMatrixInt deliveryCosts = variables::DELIVERY_COSTS;
     std::vector<int> stocks = variables::STOCKS;
     std::vector<int> needs = variables::NEEDS;
     vectorMatrixInt C = getPreprocessedMatrix(deliveryCosts);
-    
+    vectorMatrixInt currentPlan = getInitialPlan(C);
+
     while(true) {
-      vectorMatrixInt currentPlan = {
-        {0, 0, 0},
-        {0, 0, 0},
-        {0, 0, 0}
-      };
+      outputTable(currentPlan);
       std::vector<int> stocksRemainders = stocks;
       std::vector<int> needsRemainders = needs;
-      
-      int firstValidColumnInd = 0;
-      // Заполнение матрицы X
       for (int i = 0; i < C.size(); i++) {
         for (int j = 0; j < C[i].size(); j++) {
-          if (C[i][j] != 0) {
+          if (currentPlan[i][j] == 0) {
             continue;
-          }
-          int quantity = std::min(needsRemainders[j], stocksRemainders[i]);
-          currentPlan[i][j] = quantity;
-          stocksRemainders[i] -= quantity;
-          needsRemainders[j] -= quantity;
-          if (stocksRemainders[i] == 0) { 
-            goto nextIteration;
-          }
+          } 
+          stocksRemainders[i] -= currentPlan[i][j];
+          needsRemainders[j] -= currentPlan[i][j];
         }
-        nextIteration:;
       }
-      outputTable(currentPlan);
-      
-      // Получаем сумму остатков и если она равна нулю - выхоим из метода
       int sumOfRemainders = 
         std::accumulate(stocksRemainders.begin(), stocksRemainders.end(), 0) + 
         std::accumulate(needsRemainders.begin(), needsRemainders.end(), 0);
       if (sumOfRemainders == 0) {
-        return getResult(currentPlan);
+        return getDeliveryCost(currentPlan);
       }
 
 // Первый этап
@@ -145,7 +158,7 @@ private:
 
 // Второй этап
       std::vector<int> selectedRows = { 0, 0, 0 };
-      std::vector<std::tuple<int, int>> markedZerosIndexes;
+      std::vector<std::pair<int, int>> markedZerosIndexes;
       for (int cols = 0; cols < C[0].size(); cols++) {
         if(selectedColumns[cols] == 1) {
           continue;
@@ -159,30 +172,40 @@ private:
       }
 
       bool isChainFinished = false;
-      std::tuple<int, int> startChainIndex;
-      std::tuple<int, int> endChainIndex;
-      for(auto& markedZeroIndex : markedZerosIndexes) {
-        startChainIndex = markedZeroIndex;
-        std::tuple<int, int> currentChainIndex = startChainIndex;
+      std::vector<std::pair<int, int>> chain;
 
-        int rowInd = std::get<0>(markedZeroIndex);
-        if(stocksRemainders[rowInd] != 0) {
+      for (auto& markedZeroIndex : markedZerosIndexes) {
+        chain.clear();
+
+        std::pair<int, int> currentChainIndex = markedZeroIndex;
+        int currentElementRow = currentChainIndex.first;
+        int currentElementCol = currentChainIndex.second;
+        chain.push_back({ currentElementRow, currentElementCol });
+
+        if (stocksRemainders[currentElementRow] != 0) {
           isChainFinished = true;
-          endChainIndex = currentChainIndex;
           break;
         }
       }
-      // TODO: Также нужно сравнивать с 0* элементами матрицы X
-      if(isChainFinished) {
-        int startChainCol = std::get<1>(startChainIndex);
-        int endChainRow = std::get<0>(endChainIndex);
-        int teta = std::min(
-          stocksRemainders[endChainRow], 
-          needsRemainders[startChainCol]
+
+      if (isChainFinished) {
+        int staredMinInChain = std::numeric_limits<int>::max();
+        for (int i = 1; i < chain.size(); i += 2) {
+          int row = chain[i].first;
+          int col = chain[i].second;
+          if (currentPlan[row][col] < staredMinInChain) {
+            staredMinInChain = currentPlan[row][col];
+          }
+        }
+        int streakedMinInChain = std::min(
+          needsRemainders[chain[0].second],
+          stocksRemainders[chain[chain.size() - 1].first]
         );
-        for(auto& markedZeroIndex : markedZerosIndexes) {
-          int row = std::get<0>(markedZeroIndex);
-          int col = std::get<1>(markedZeroIndex);
+        int teta = std::min(staredMinInChain, streakedMinInChain);
+        for (int i = 0; i < chain.size(); i += 2) {
+          int row = chain[i].first;
+          int col = chain[i].second;
+          // Изменяем опорный план
           currentPlan[row][col] += teta;
         }
       }
@@ -190,26 +213,26 @@ private:
 //Третий этап
         int minFromOuterZone = getMinFromOuterZone(C, selectedRows, selectedColumns);
         // Отнимаем минимальный элемент из выделенных столбцов
-        for(int row = 0; row < C.size(); row++) {
-          if(selectedRows[row] == 1) {
+        for (int row = 0; row < C.size(); row++) {
+          if (selectedRows[row] == 1) {
             continue;
           }
-          for(int col = 0; col < C[row].size(); col++) { 
+          for (int col = 0; col < C[row].size(); col++) { 
             C[row][col] -= minFromOuterZone;
           }
         }
         // Добавляем минимальный элемент к выделенным рядам
-        for(int col = 0; col < C[0].size(); col++) {
-          if(selectedColumns[col] == 0) {
+        for (int col = 0; col < C[0].size(); col++) {
+          if (selectedColumns[col] == 0) {
             continue;
           }
           int minInCol = std::numeric_limits<int>::max();
-          for(int k = 0; k < C.size(); k++) {
-            if(C[k][col] < minInCol) {
+          for (int k = 0; k < C.size(); k++) {
+            if (C[k][col] < minInCol) {
               minInCol = C[k][col];
             }
           }
-          for(int row = 0; row < C.size(); row++) {
+          for (int row = 0; row < C.size(); row++) {
             C[row][col] += abs(minInCol);
           }
         }
