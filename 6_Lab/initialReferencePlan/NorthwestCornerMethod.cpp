@@ -3,6 +3,8 @@
 #include "../variables.h"
 #include <iomanip>
 
+typedef std::vector<std::vector<int>> vectorMatrixInt; 
+
 class NorthwestCornerMethod {
 public:
   NorthwestCornerMethod() = default;
@@ -15,14 +17,25 @@ public:
     std::cout << "Общая стоимость плана перевозки:\nZ = " << methodResult << "\n";
   }
 
+  vectorMatrixInt getCurrentPlan() {
+    return currentPlan;
+  }
+
 private:
-  void outputTable(int i, int j, int productCount, vectorMatrixInt& currentTable) {
-    currentTable[i][j] = productCount;      
+  vectorMatrixInt currentPlan = {
+      {0, 0, 0},
+      {0, 0, 0},
+      {0, 0, 0}
+    };
+
+private:
+  void outputCurrentPlan(int i, int j, int productCount) {
+    currentPlan[i][j] = productCount;      
     std::cout << "-------------------------\n";
-    for(int i = 0; i < currentTable.size(); i++) {
+    for(int i = 0; i < currentPlan.size(); i++) {
       std::cout << "| ";
-      for(int j = 0; j < currentTable[i].size(); j++) {
-        std::cout << std::setw(5) << currentTable[i][j] << " | ";
+      for(int j = 0; j < currentPlan[i].size(); j++) {
+        std::cout << std::setw(5) << currentPlan[i][j] << " | ";
       }
       std::cout << "\n";
     }
@@ -30,11 +43,7 @@ private:
 
   }
   const int result() {
-    vectorMatrixInt currentTable = {
-      {0, 0, 0},
-      {0, 0, 0},
-      {0, 0, 0}
-    };
+    
     vectorMatrixInt deliveryCosts = variables::DELIVERY_COSTS;
     std::vector<int> stocks = variables::STOCKS;
     std::vector<int> needs = variables::NEEDS;
@@ -44,7 +53,7 @@ private:
     for (size_t i = 0; i < deliveryCosts.size(); i++) { // по запасам
       for (size_t j = firstValidColumnInd; j < deliveryCosts[i].size(); j++) { // по потребностям
         int quantity = std::min(needs[j], stocks[i]);
-        outputTable(i, j, quantity, currentTable);
+        outputCurrentPlan(i, j, quantity);
         result += deliveryCosts[i][j] * quantity;
         stocks[i] -= quantity;
         needs[j] -= quantity;

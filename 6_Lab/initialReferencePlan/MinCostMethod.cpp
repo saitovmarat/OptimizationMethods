@@ -4,6 +4,8 @@
 #include <iomanip>
 #include <algorithm>
 
+typedef std::vector<std::vector<int>> vectorMatrixInt; 
+
 class MinCostMethod {
 public:
   MinCostMethod(){}
@@ -16,26 +18,31 @@ public:
     std::cout << "Общая стоимость плана перевозки:\nZ = " << methodResult << "\n";
   }
 
-private:
-  void outputTable(int i, int j, int productCount, vectorMatrixInt& currentTable) {
-    currentTable[i][j] = productCount;      
-    std::cout << "-------------------------\n";
-    for(int i = 0; i < currentTable.size(); i++) {
-      std::cout << "| ";
-      for(int j = 0; j < currentTable[i].size(); j++) {
-        std::cout << std::setw(5) << currentTable[i][j] << " | ";
-      }
-      std::cout << "\n";
-    }
-    std::cout << "-------------------------\n";
-
+  vectorMatrixInt getCurrentPlan() {
+    return currentPlan;
   }
-  const int result() {
-    vectorMatrixInt currentTable = {
+
+private:
+  vectorMatrixInt currentPlan = {
       {0, 0, 0},
       {0, 0, 0},
       {0, 0, 0}
     };
+
+private:
+  void outputCurrentPlan(int i, int j, int productCount) {
+    currentPlan[i][j] = productCount;      
+    std::cout << "-------------------------\n";
+    for(int i = 0; i < currentPlan.size(); i++) {
+      std::cout << "| ";
+      for(int j = 0; j < currentPlan[i].size(); j++) {
+        std::cout << std::setw(5) << currentPlan[i][j] << " | ";
+      }
+      std::cout << "\n";
+    }
+    std::cout << "-------------------------\n";
+  }
+  const int result() {
     vectorMatrixInt deliveryCosts = variables::DELIVERY_COSTS;
     std::vector<int> stocks = variables::STOCKS;
     std::vector<int> needs = variables::NEEDS;
@@ -58,7 +65,7 @@ private:
         break;
       }
       int quantity = std::min(stocks[minRow], needs[minCol]);
-      outputTable(minRow, minCol, quantity, currentTable);
+      outputCurrentPlan(minRow, minCol, quantity);
       result += deliveryCosts[minRow][minCol] * quantity;
       stocks[minRow] -= quantity;
       needs[minCol] -= quantity;
